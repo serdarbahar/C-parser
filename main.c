@@ -4,7 +4,6 @@
 #include "Structs.c"
 #include "parsing.c"
 
-
 typedef struct {
     int quantity;
     char* name;
@@ -16,6 +15,7 @@ typedef struct {
      * For example, if the action is "buy", only personChain1 and itemChain will be initialized.
      * Only if 2 people are involved, personChain2 will be initialized.
 */
+
 typedef struct {
     struct Person** personChain1;
     int personChain1Size;
@@ -70,15 +70,27 @@ int actionEvaluator(char* actionType, actionArgs* args) {
 
 int main() {
 
-    struct People *people = initializePeople(20);
-    struct PlacesList *places = initializePlacesList(20);
+    while (1) {
+
+        struct People *people = initializePeople(20);
+        struct PlacesList *places = initializePlacesList(20);
+
+        struct Result *inputSentence = parsing();
+        if (inputSentence->exit)
+            break;
+        if (!inputSentence->isSentenceValid) {
+            printf("INVALID");
+            inputSentence->freeResult(inputSentence);
+            places->free(places);
+            people->free(people);
+            continue;
+        }
 
 
-    // ...
+        inputSentence->freeResult(inputSentence);
+        places->free(places);
+        people->free(people);
 
-
-    places->free(places);
-    people->free(people);
-
+    }
     return 0;
 }
