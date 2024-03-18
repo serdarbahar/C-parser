@@ -595,10 +595,10 @@ int main() {
             j++;
         }
 
-        //use isSentenceValid to check if the input is correct
-        //use isQuestion to check if it is a question
+        // use isSentenceValid to check if the input is correct
+        // use isQuestion to check if it is a question
         //      use isWhoAt|... to check question type, then use the according the question array (e.g. totalItemQuestion[3])
-        //if not question, use sentences[][] to retrieve terminals
+        // if not question, use sentences[][] to retrieve terminals
         
     }
 }
