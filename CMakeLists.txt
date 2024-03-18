@@ -3,4 +3,8 @@ project(Interpreter_Project C)
 
 set(CMAKE_C_STANDARD 23)
 
-add_executable(Interpreter_Project main.c)
+add_executable(Interpreter_Project main.c
+        hashmap.c
+        Structs.c
+        parsing.c
+)

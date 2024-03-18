@@ -1,51 +1,34 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "Structs.c"
+#include "parsing.c"
 
-// the stuff below don't need to be a struct in the final form, just a map for the second is enough
 
-struct Inventory {
-    // TODO: a map of { item_name : count }
-};
-
-struct Place {
-    char* name;
-
-    // TODO: a map of everyone here
-};
-
-struct Person {
-    char* name;
-    struct Inventory* inventory;
-};
-
-struct ItemWithQuantity {
+typedef struct {
     int quantity;
     char* name;
-};
+} ItemWithQuantity;
 
-
-struct actionArgs {
-
-    /*
+/*
     * Multipurpose argument bundle for actions.
-    * Only the variables that will be needed to call action will be initialized at the time of the action.
-    */
-
+     * Only the variables that will be needed to call action will be initialized at the time of the action.
+     * For example, if the action is "buy", only personChain1 and itemChain will be initialized.
+     * Only if 2 people are involved, personChain2 will be initialized.
+*/
+typedef struct {
     struct Person** personChain1;
     int personChain1Size;
     struct Person* personChain2;
     int personChain2Size;
 
-    struct ItemWithQuantity** itemChain;
+    ItemWithQuantity** itemChain;
     int itemChainSize;
     struct Place* place;
-};
+} actionArgs;
 
-/*
- * Possible action types : "buy", "buy from", "sell", "sell to", "go to"
- */
-int actionEvaluator(char* actionType, struct actionArgs* args) {
+// Possible action types : "buy", "buy from", "sell", "sell to", "go to"
+int actionEvaluator(char* actionType, actionArgs* args) {
 
     if (strcmp(actionType, "buy") == 0) {
         int numOfPeople = args->personChain1Size;
@@ -57,7 +40,6 @@ int actionEvaluator(char* actionType, struct actionArgs* args) {
                 struct ItemWithQuantity* item_ptr = *( args->itemChain + i * sizeof(struct ItemWithQuantity*) );
 
                 // TODO: complete after map's are implemented
-                // person_ptr->inventory[ item_ptr->name ] += item_ptr->quantity;
 
             }
         }
@@ -84,30 +66,19 @@ int actionEvaluator(char* actionType, struct actionArgs* args) {
         return -1;
     }
 }
-int buyEvaluator(struct Person* person, struct ItemWithQuantity* itemWithQuantity) {
 
-    return 0;
-}
-int sellEvaluator(struct Person* person, struct ItemWithQuantity* itemWithQuantity) {
-
-    return 0;
-}
-int buyFromEvaluator(struct Person* person1, struct Person* person2, struct ItemWithQuantity* itemWithQuantity) {
-
-    return 0;
-}
-int sellToEvaluator(struct Person* person1, struct Person* person2, struct ItemWithQuantity* itemWithQuantity) {
-
-    return 0;
-}
-int goToEvaluator(struct Person* person, struct Place* place) {
-
-    return 0;
-}
 
 int main() {
 
+    struct People *people = initializePeople(20);
+    struct PlacesList *places = initializePlacesList(20);
 
+
+    // ...
+
+
+    places->free(places);
+    people->free(people);
 
     return 0;
 }
