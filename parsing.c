@@ -94,7 +94,6 @@ struct Result {
     int isTotalItem;
     int isTotal;
 
-
     char***** sentences;
     char**** actions;
     char**** conditions;
@@ -198,8 +197,8 @@ struct Result* parsing() {
     //pointer to 0: start of subjects 1: end of subjects 2: item
     char** subjectsForTotalItem = (char**) calloc(MAX_TOKEN, sizeof(char*));
     char* totalQuestion = (char*) calloc(1024, sizeof(char));
-    char* whereQuestion =  (char*) calloc(1024, sizeof(char));;
-    char* whoAtQuestion = (char*) calloc(1024, sizeof(char));;
+    char* whereQuestion =  (char*) calloc(1024, sizeof(char));
+    char* whoAtQuestion = (char*) calloc(1024, sizeof(char));
 
     int sentenceCount = 0;
     int actionCount = 0;

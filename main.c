@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "Evaluators.c"
 #include "Structs.c"
 #include "parsing.c"
+#include "Evaluators.c"
 
 int main() {
 
@@ -13,8 +13,10 @@ int main() {
     while (1) {
 
         struct Result *input = parsing();
+
         if (input->exit)
             break;
+
         if (!input->isSentenceValid) {
             printf("INVALID");
             input->freeResult(input);
@@ -24,19 +26,41 @@ int main() {
         }
 
         if (input->isQuestion) {
-            if (input->whoAtQuestion) {
+            questionArgs args;
 
+
+            // input loading
+
+            if (input->whoAtQuestion) {
+                args.questionType = "who at";
+                char* placeName = input->whoAtQuestion;
+                args.place = places->getPlace(places,placeName);
             }
             else if (input->totalQuestion) {
-
+                args.questionType = "total";
+                char* personName = input->totalQuestion;
+                args.person = people->getPerson(people,personName);
             }
             else if (input->totalItemQuestion) {
+                args.questionType = "total item";
+
+                // TODO : serdar inputu diğerleri gibi verir misin aşkım :3
+
 
             }
             else if (input->whereQuestion) {
-
+                args.questionType = "where";
+                char* personName = input->whereQuestion;
+                args.person = people->getPerson(people,personName);
             }
+
+
+
+
+
         }
+
+
         else {
             int sentenceCount = 0;
             while (input->sentences[sentenceCount] != NULL) {

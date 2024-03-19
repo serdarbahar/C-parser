@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include "Structs.c"
 #include "parsing.c"
+#include "Evaluators.h"
 
 
 typedef int boolean;
@@ -32,6 +32,7 @@ typedef struct {
     char* place; // name of place
 } actionArgs;
 
+
 typedef struct {
     char* conditionType;
 
@@ -43,6 +44,21 @@ typedef struct {
 
     char* place; // name of place
 } conditionArgs;
+
+
+typedef struct {
+    char* questionType;
+
+    struct Person* person;
+
+    struct Person** personChain; // only used in totalItem question
+    int personChainSize;
+
+    char* itemName;
+
+    struct Place* place;
+} questionArgs;
+
 
 /*
  * Possible action types : "buy", "buy from", "sell", "sell to", "go to"
@@ -349,7 +365,7 @@ int conditionEvaluator(conditionArgs* args, struct People* people, struct Places
 }
 
 /**
- * evaluates the conditions and does the action if the conditions are true
+ * Evaluates the conditions and does the action if the conditions are true
  * returns -10 if the conditions are false, returns the return value of the actionEvaluator otherwise
  */
 int ifEvaluator(actionArgs* actionArgs, conditionArgs* conditionArgs, struct People* people, struct PlacesList* places) {
@@ -363,3 +379,129 @@ int ifEvaluator(actionArgs* actionArgs, conditionArgs* conditionArgs, struct Peo
 
 }
 
+/**
+ * Question types : "who at", "total", "total item", "where"
+ */
+char* questionEvaluator(questionArgs* args) {
+
+    if (strcmp(args->questionType, "who at") == 0) {
+        int resultMaxSize = 1000;
+        char* resultString = calloc(resultMaxSize, sizeof(char));
+
+        int numOfPeople = args->place->numOfPeople;
+
+        int resultStringIdx = 0;
+
+        for (int personIdx = 0; personIdx < numOfPeople; personIdx++) {
+
+            char* personName = args->place->peopleInPlace[personIdx]->name;
+            int personNameLength = strlen(personName);
+
+            // resizing if resultString's size is not enough
+            if (resultStringIdx + personNameLength + 10 > resultMaxSize) {
+                resultMaxSize *= 2;
+                char* temp = realloc(resultString, resultMaxSize);
+                if (temp == NULL) {
+                    printf("Memory allocation failed\n");
+                    return NULL;
+                }
+                resultString = temp;
+            }
+
+            for (int i = 0; i < personNameLength; i++)
+                resultString[resultStringIdx++] = personName[i];
+
+            if (personIdx != numOfPeople - 1) {
+                resultString[resultStringIdx++] = ' ';
+                resultString[resultStringIdx++] = 'a';
+                resultString[resultStringIdx++] = 'n';
+                resultString[resultStringIdx++] = 'd';
+                resultString[resultStringIdx++] = ' ';
+            }
+            else {
+                resultString[resultStringIdx] = '\0';
+            }
+        }
+
+        char* temp = realloc(resultString, resultStringIdx + 1);
+        if (temp == NULL) {
+            printf("Memory allocation failed\n");
+            return NULL;
+        }
+        resultString = temp;
+
+        return resultString;
+    }
+
+    else if (strcmp(args->questionType, "total") == 0) {
+        struct Inventory* inventory = args->person->inventory;
+
+        int resultMaxSize = 1000;
+        char* resultString = calloc(resultMaxSize, sizeof(char));
+        int resultStringIdx = 0;
+
+        for (int i=0; i<inventory->numOfItems; i++) {
+            char* itemName = inventory->itemNames[i];
+            int quantity = inventory->itemCounts[i];
+            char quantityStr[10];
+            sprintf(quantityStr, "%d", quantity);
+
+            int itemNameLength = strlen(itemName);
+            int quantityLength = strlen(quantityStr);
+
+            // resizing if resultString's size is not enough
+            if (resultStringIdx + itemNameLength + quantityLength + 10 > resultMaxSize) {
+                resultMaxSize *= 2;
+                char* temp = realloc(resultString, resultMaxSize);
+                if (temp == NULL) {
+                    printf("Memory allocation failed\n");
+                    return NULL;
+                }
+                resultString = temp;
+            }
+
+            for (int j=0; j<quantityLength; j++)
+                resultString[resultStringIdx++] = quantityStr[j];
+
+            resultString[resultStringIdx++] = ' ';
+
+            for (int j=0; j<itemNameLength; j++)
+                resultString[resultStringIdx++] = itemName[j];
+
+            if (i != inventory->numOfItems - 1) {
+                resultString[resultStringIdx++] = ' ';
+                resultString[resultStringIdx++] = 'a';
+                resultString[resultStringIdx++] = 'n';
+                resultString[resultStringIdx++] = 'd';
+                resultString[resultStringIdx++] = ' ';
+            }
+            else {
+                resultString[resultStringIdx] = '\0';
+            }
+        }
+
+        char* temp = realloc(resultString, resultStringIdx + 1);
+        if (temp == NULL) {
+            printf("Memory allocation failed\n");
+            return NULL;
+        }
+        resultString = temp;
+
+        return resultString;
+    }
+
+    else if (strcmp(args->questionType, "total item") == 0) {
+
+    }
+
+    else if (strcmp(args->questionType, "where") == 0) {
+        return args->person->location->name;
+    }
+
+
+    else {
+        printf("Invalid question type\n");
+        return NULL;
+    }
+
+}
