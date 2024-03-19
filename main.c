@@ -13,11 +13,13 @@ int main() {
     while (1) {
 
         struct Result *input = parsing();
+
         if (input->exit)
             break;
 
         if (!input->isSentenceValid) {
             printf("INVALID");
+            input->freeResult(input);
 
             continue;
         }
@@ -26,7 +28,7 @@ int main() {
             questionArgs args;
 
 
-            // input loading
+            // loading input
 
             if (input->whoAtQuestion) {
                 args.questionType = "who at";
@@ -60,11 +62,14 @@ int main() {
                 args.person = people->getPerson(people,personName);
             }
 
+            // getting output
 
-
-
-
+            char* outputString = questionEvaluator(&args);
+            printf("%s",outputString);
+            continue;
         }
+
+
         else {
             int sentenceCount = 0;
             while (input->sentences[sentenceCount] != NULL) {
