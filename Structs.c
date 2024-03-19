@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-
 //                                  INVENTORY STRUCT
 
 struct Inventory {

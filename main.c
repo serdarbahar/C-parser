@@ -24,19 +24,35 @@ int main() {
         }
 
         if (input->isQuestion) {
-            if (input->whoAtQuestion) {
+            questionArgs args;
 
+
+            // input loading
+
+            if (input->whoAtQuestion) {
+                args.questionType = "who at";
+                char* placeName = input->whoAtQuestion;
+                args.place = places->getPlace(places,placeName);
             }
             else if (input->totalQuestion) {
-
+                args.questionType = "total";
+                char* personName = input->totalQuestion;
+                args.person = people->getPerson(people,personName);
             }
             else if (input->totalItemQuestion) {
+                args.questionType = "total item";
+
+                // TODO : serdar inputu diğerleri gibi verir misin aşkım :3
+
 
             }
             else if (input->whereQuestion) {
-
+                args.questionType = "where";
+                char* personName = input->whereQuestion;
+                args.person = people->getPerson(people,personName);
             }
         }
+
         else {
             int sentenceCount = 0;
             while (input->sentences[sentenceCount] != NULL) {
