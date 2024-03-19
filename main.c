@@ -70,10 +70,10 @@ int actionEvaluator(char* actionType, actionArgs* args) {
 
 int main() {
 
+    struct People *people = initializePeople(20);
+    struct PlacesList *places = initializePlacesList(20);
+    
     while (1) {
-
-        struct People *people = initializePeople(20);
-        struct PlacesList *places = initializePlacesList(20);
 
         struct Result *input = parsing();
         if (input->exit)
@@ -116,9 +116,10 @@ int main() {
 
 
         input->freeResult(input);
-        places->free(places);
-        people->free(people);
 
     }
+    
+    places->free(places);
+    people->free(people);
     return 0;
 }
