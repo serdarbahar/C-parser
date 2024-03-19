@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "Structs.h"
-#include "parsing.c"
+#include "parsing.h"
 #include "Evaluators.h"
 
 int main() {
