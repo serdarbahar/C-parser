@@ -18,6 +18,7 @@ int main() {
 
         if (!input->isSentenceValid) {
             printf("INVALID");
+
             continue;
         }
 
