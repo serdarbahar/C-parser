@@ -75,19 +75,47 @@ int main() {
         struct People *people = initializePeople(20);
         struct PlacesList *places = initializePlacesList(20);
 
-        struct Result *inputSentence = parsing();
-        if (inputSentence->exit)
+        struct Result *input = parsing();
+        if (input->exit)
             break;
-        if (!inputSentence->isSentenceValid) {
+        if (!input->isSentenceValid) {
             printf("INVALID");
-            inputSentence->freeResult(inputSentence);
+            input->freeResult(input);
             places->free(places);
             people->free(people);
             continue;
         }
 
+        if (input->isQuestion) {
+            if (input->whoAtQuestion) {
 
-        inputSentence->freeResult(inputSentence);
+            }
+            else if (input->totalQuestion) {
+
+            }
+            else if (input->totalItemQuestion) {
+
+            }
+            else if (input->whereQuestion) {
+
+            }
+        }
+        else {
+            int sentenceCount = 0;
+            while (input->sentences[sentenceCount] != NULL) {
+                sentenceCount++;
+            }
+
+            for (int i = 0; i<sentenceCount; i++) {
+                //
+            }
+
+        }
+
+
+
+
+        input->freeResult(input);
         places->free(places);
         people->free(people);
 
