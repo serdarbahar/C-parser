@@ -728,6 +728,7 @@ struct Result* parsing() {
     // if not question, use sentences[][] to retrieve terminals
 
     struct Result* result = (struct Result*) malloc(sizeof(struct Result));
+    result->exit = exit;
     result->isSentenceValid = isSentenceValid;
     result->isQuestion = isQuestion;
     result->isWhoAt = isWhoAt;
