@@ -19,6 +19,8 @@ typedef struct {
      * Only if 2 people are involved, personChain2 will be initialized.
 */
 typedef struct {
+    char* actionType;
+
     char** personChain1; // list of names of people
     int personChain1Size;
     char** personChain2;
@@ -31,6 +33,8 @@ typedef struct {
 } actionArgs;
 
 typedef struct {
+    char* conditionType;
+
     char** personChain; // list of names of people
     int personChainSize;
 
@@ -42,10 +46,11 @@ typedef struct {
 
 /*
  * Possible action types : "buy", "buy from", "sell", "sell to", "go to"
- *
  * returns 0 if action is successful, 1 if action is INVALID, -1 if action type is invalid
  */
-int actionEvaluator(char* actionType, actionArgs* args, struct People* people, struct PlacesList* places) {
+int actionEvaluator(actionArgs* args, struct People* people, struct PlacesList* places) {
+
+    char* actionType = args->actionType;
 
     // personChain1 buy itemChain
     if (strcmp(actionType, "buy") == 0) {
@@ -72,20 +77,29 @@ int actionEvaluator(char* actionType, actionArgs* args, struct People* people, s
         int numOfItems = args->itemChainSize;
 
         bool everyoneCanSell = true;
+
         bool breakOuterLoop = false;
         for (int i=0; i<numOfPeople; i++) {
             if (breakOuterLoop) break;
 
             struct Person* person = people->getPerson(people, args->personChain1[i]);
             for (int j=0; j<numOfItems; j++) {
-
                 ItemWithQuantity* item = args->itemChain[j];
                 if (person->getItemQuantity(person, item->name) < item->quantity) {
                     everyoneCanSell = false;
                     breakOuterLoop = true;
                     break;
                 }
+            }
+        }
 
+        if (everyoneCanSell) {
+            for (int i=0; i<numOfPeople; i++) {
+                struct Person* person = people->getPerson(people, args->personChain1[i]);
+                for (int j=0; j<numOfItems; j++) {
+                    ItemWithQuantity* item = args->itemChain[j];
+                    person->subtractItem(person, item->name, item->quantity);
+                }
             }
         }
 
@@ -232,22 +246,99 @@ int actionEvaluator(char* actionType, actionArgs* args, struct People* people, s
  * Possible condition types : "at", "has", "has less than", "has more than"
  * returns 1 if conditionChain is true, returns 0 if conditionChain is false, -1 is conditionType is invalid
  */
-int conditionEvaluator(char* conditionType, conditionArgs* args) {
+int conditionEvaluator(conditionArgs* args, struct People* people, struct PlacesList* places) {
 
+    char* conditionType = args->conditionType;
+
+    // personChain at place
     if (strcmp(conditionType, "at") == 0) {
+        char* placeName = args->place;
+        struct Place* place = places->getPlace(places, placeName);
 
+        boolean everyoneAtPlace = 1;
+        for (int i=0; i<args->personChainSize; i++) {
+
+            char* personName = args->personChain[i];
+            struct Person* person = people->getPerson(people, personName);
+
+            if (person->location != place) {
+                everyoneAtPlace = 0;
+                break;
+            }
+        }
+
+        return everyoneAtPlace;
     }
 
+    // personChain has itemChain
     if (strcmp(conditionType, "has") == 0) {
 
+        boolean everyoneHasExactQuantity = 1;
+
+        for (int i=0; i<args->personChainSize; i++) {
+
+            char* personName = args->personChain[i];
+            struct Person* person = people->getPerson(people, personName);
+
+            for (int j=0; j<args->itemChainSize; j++) {
+
+                ItemWithQuantity* item = args->itemChain[j];
+
+                if (person->getItemQuantity(person, item->name) != item->quantity) {
+                    everyoneHasExactQuantity = 0;
+                    return everyoneHasExactQuantity;
+                }
+
+            }
+        }
+
+        return everyoneHasExactQuantity;
     }
 
     if (strcmp(conditionType, "has less than") == 0) {
 
+        boolean everyoneHasLessThanQuantity = 1;
+
+        for (int i=0; i<args->personChainSize; i++) {
+
+            char* personName = args->personChain[i];
+            struct Person* person = people->getPerson(people, personName);
+
+            for (int j=0; j<args->itemChainSize; j++) {
+                ItemWithQuantity* item = args->itemChain[j];
+
+                if (person->getItemQuantity(person, item->name) >= item->quantity) {
+                    everyoneHasLessThanQuantity = 0;
+                    return everyoneHasLessThanQuantity;
+                }
+
+            }
+        }
+
+        return everyoneHasLessThanQuantity;
     }
 
     if (strcmp(conditionType, "has more than") == 0) {
 
+        boolean everyoneHasMoreThanQuantity = 1;
+
+        for (int i=0; i<args->personChainSize; i++) {
+
+            char* personName = args->personChain[i];
+            struct Person* person = people->getPerson(people, personName);
+
+            for (int j=0; j<args->itemChainSize; j++) {
+                ItemWithQuantity* item = args->itemChain[j];
+
+                if (person->getItemQuantity(person, item->name) <= item->quantity) {
+                    everyoneHasMoreThanQuantity = 0;
+                    return everyoneHasMoreThanQuantity;
+                }
+
+            }
+        }
+
+        return everyoneHasMoreThanQuantity;
     }
 
     else {
@@ -256,3 +347,19 @@ int conditionEvaluator(char* conditionType, conditionArgs* args) {
     }
 
 }
+
+/**
+ * evaluates the conditions and does the action if the conditions are true
+ * returns -10 if the conditions are false, returns the return value of the actionEvaluator otherwise
+ */
+int ifEvaluator(actionArgs* actionArgs, conditionArgs* conditionArgs, struct People* people, struct PlacesList* places) {
+
+    int conditionResult = conditionEvaluator(conditionArgs, people, places);
+
+    if (conditionResult)
+        return actionEvaluator(actionArgs, people, places);
+    else
+        return -10;
+
+}
+
