@@ -1,63 +1,12 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "Structs.c"
-#include "parsing.h"
+#include "parsing.c"
 #include "Evaluators.h"
-
 
 typedef int boolean;
 
-typedef struct {
-    int quantity;
-    char* name;
-} ItemWithQuantity;
-
-/*
-    * Multipurpose argument bundle for actions.
-     * Only the variables that will be needed to call action will be initialized at the time of the action.
-     * For example, if the action is "buy", only personChain1 and itemChain will be initialized.
-     * Only if 2 people are involved, personChain2 will be initialized.
-*/
-typedef struct {
-    char* actionType;
-
-    char** personChain1; // list of names of people
-    int personChain1Size;
-    char** personChain2;
-    int personChain2Size;
-
-    ItemWithQuantity** itemChain;
-    int itemChainSize;
-
-    char* place; // name of place
-} actionArgs;
-
-
-typedef struct {
-    char* conditionType;
-
-    char** personChain; // list of names of people
-    int personChainSize;
-
-    ItemWithQuantity** itemChain;
-    int itemChainSize;
-
-    char* place; // name of place
-} conditionArgs;
-
-
-typedef struct {
-    char* questionType;
-
-    struct Person* person;
-
-    char** personChain; // only used in totalItem question
-    int personChainSize;
-
-    char* itemName;
-
-    struct Place* place;
-} questionArgs;
 
 
 /*
@@ -241,12 +190,7 @@ int actionEvaluator(actionArgs* args, struct People* people, struct PlacesList* 
 
         for (int i=0; i<args->personChain1Size; i++) {
             struct Person* person = people->getPerson(people, args->personChain1[i]);
-
-            struct Place* previousLocation = person->location;
-            previousLocation->removePerson(previousLocation, person);
-
-            person->location = place;
-            place->addPerson(place, person);
+            person->goTo(person, place);
         }
 
         return 0;
