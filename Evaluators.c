@@ -51,7 +51,7 @@ typedef struct {
 
     struct Person* person;
 
-    struct Person** personChain; // only used in totalItem question
+    char** personChain; // only used in totalItem question
     int personChainSize;
 
     char* itemName;

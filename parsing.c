@@ -94,6 +94,7 @@ struct Result {
     int isTotalItem;
     int isTotal;
 
+
     char***** sentences;
     char**** actions;
     char**** conditions;
@@ -302,14 +303,14 @@ struct Result* parsing() {
                         isSentenceValid = 0;
                         break;
                     }
-                    totalItemQuestion[0] = (char **) &subjectsForTotalItem;
+                    totalItemQuestion[0] = subjectsForTotalItem;
                     subjectsForTotalItem[0] = curr;
                     questionState = 1;
                     subjectCountforQ++;
                 }
                 else if (questionState == 1) { //"and" or "total" expected
                     if (strcmp(curr, "total") == 0) {
-                        totalItemQuestion[1] = (char **) &subjectsForTotalItem[subjectCountforQ-1];
+                        totalItemQuestion[1] = &subjectsForTotalItem[subjectCountforQ-1];
                         questionState = 3;
                     }
                     else if (strcmp(curr, "and") == 0) {
@@ -374,7 +375,7 @@ struct Result* parsing() {
             if (isQuestion)
                 continue;
 
-            sentences[sentenceCount][0] = (char ***) &actions[actionCount];
+            sentences[sentenceCount][0] = actions[actionCount];
             sentenceState = 1;
             j--;
 
@@ -468,12 +469,12 @@ struct Result* parsing() {
                     }
 
                     objects[objectCount][1] = p;
-                    actions[actionCount][4] = (char **) &objects[objectCount];
+                    actions[actionCount][4] = objects[objectCount];
                     objectCount++;
                     verbState *= 10;
                     if (j + 1 == numTokens) {
-                        actions[actionCount][5] = (char **) &objects[objectCount - 1];
-                        sentences[sentenceCount][1] = (char ***) &actions[actionCount];
+                        actions[actionCount][5] = objects[objectCount - 1];
+                        sentences[sentenceCount][1] = actions[actionCount];
                     }
                 }
                 else if (verbState == 3) {
@@ -485,15 +486,15 @@ struct Result* parsing() {
 
                     objects[objectCount][0] = curr;
                     objects[objectCount][1] = curr;
-                    actions[actionCount][4] = (char **) &objects[objectCount];
-                    actions[actionCount][5] = (char **) &objects[objectCount];
+                    actions[actionCount][4] = objects[objectCount];
+                    actions[actionCount][5] = objects[objectCount];
 
                     objectCount++;
                     verbState *= 10;
 
                     if (j + 1 == numTokens) {
-                        actions[actionCount][5] = (char **) &objects[objectCount - 1];
-                        sentences[sentenceCount][1] = (char ***) &actions[actionCount];
+                        actions[actionCount][5] = objects[objectCount - 1];
+                        sentences[sentenceCount][1] = actions[actionCount];
                     }
                 }
                 else if (verbState == 10 || verbState == 20 || verbState == 30) {  //"and" or "from/to" or end of actions
@@ -508,12 +509,13 @@ struct Result* parsing() {
                                 curr = tokens[++j];
                                 objects[objectCount][1] = curr;
                                 objectCount++;
+                                curr = tokens[++j];
                                 if (j == numTokens)
                                     break;
                             }
                         }
                         j--;
-                        actions[actionCount][5] = (char **) &objects[objectCount - 1];
+                        actions[actionCount][5] = objects[objectCount - 1];
                         if (endOfActionContinuingWithAnd || verbState == 30) {
                             subjectState = 0;
                             verbState = 0;
@@ -522,18 +524,18 @@ struct Result* parsing() {
                     } else if ((strcmp(curr, "from") == 0 && verbState == 10) ||
                                (strcmp(curr, "to") == 0 && verbState == 20)) {
                         curr = tokens[++j]; //subject, bought from or sold to
-                        actions[actionCount][2] = &actionFromTo[actionCount];
+                        actions[actionCount][3] = &actionFromTo[actionCount];
                         actionFromTo[actionCount] = curr;
                     }
                     else if (j + 1 == numTokens) {
-                        actions[actionCount][5] = (char **) &objects[objectCount - 1];
-                        sentences[sentenceCount][1] = (char ***) &actions[actionCount];
+                        actions[actionCount][5] =  objects[objectCount - 1];
+                        sentences[sentenceCount][1] = actions[actionCount];
                     }
                     else if (strcmp(curr, "if") == 0) {
-                        actions[actionCount][5] = (char **) &objects[objectCount - 1];
+                        actions[actionCount][5] = objects[objectCount - 1];
                         subjectState = 0;
                         verbState = 0;
-                        sentences[sentenceCount][1] = (char ***) &actions[actionCount];
+                        sentences[sentenceCount][1] = actions[actionCount];
                         sentenceState = 2;
                         actionCount++;
                     }
@@ -548,7 +550,7 @@ struct Result* parsing() {
         }
 
         else if (sentenceState == 2) {
-            sentences[sentenceCount][2] = (char ***) &conditions[conditionCount];
+            sentences[sentenceCount][2] = conditions[conditionCount];
             sentenceState = 3;
             j--;
 
@@ -576,7 +578,7 @@ struct Result* parsing() {
                 if (strcmp(curr, "and") == 0)
                     subjectState = 2;
                 else if (strcmp(curr, "at") == 0) {
-                    conditions[conditionCount][1] = &subjects[subjectCount-1];
+                    conditions[conditionCount][1] = subjects[subjectCount-1];
                     char *str5 = curr;
                     conditions[conditionCount][2] = &str5;
                     subjectState = 3;
@@ -627,7 +629,7 @@ struct Result* parsing() {
 
             else if (subjectState == 3) { //object sequence expected
                 if (verbState == 2) {
-                    conditions[conditionCount][3] = (char **) &objects[objectCount];
+                    conditions[conditionCount][3] = objects[objectCount];
 
                     if (!is_valid_digit_number(curr)) {
                         isSentenceValid = 0;
@@ -662,7 +664,7 @@ struct Result* parsing() {
                         }
                     }
 
-                    conditions[conditionCount][4] = (char **) &objects[objectCount - 1];
+                    conditions[conditionCount][4] = objects[objectCount - 1];
                     curr = tokens[j];
                 }
                 else if (verbState == 1) {
@@ -672,8 +674,8 @@ struct Result* parsing() {
                         break;
                     }
 
-                    conditions[conditionCount][3] = (char **) &objects[objectCount];
-                    conditions[conditionCount][4] = (char **) &objects[objectCount];
+                    conditions[conditionCount][3] = objects[objectCount];
+                    conditions[conditionCount][4] = objects[objectCount];
 
                     objects[objectCount][0] = curr;
                     objects[objectCount][1] = curr;
@@ -689,7 +691,7 @@ struct Result* parsing() {
                 int i = j;
                 int isNewSentence = 0;
                 if (curr == NULL) {
-                    sentences[sentenceCount][3] = (char ***) &conditions[conditionCount];
+                    sentences[sentenceCount][3] = conditions[conditionCount];
                     break;
                 }
                 if (strcmp(curr, "and") == 0) {
@@ -713,7 +715,7 @@ struct Result* parsing() {
                 conditionCount++;
                 if (isNewSentence) {
                     sentenceState = 0;
-                    sentences[sentenceCount][3] = (char ***) &conditions[conditionCount - 1];
+                    sentences[sentenceCount][3] = conditions[conditionCount - 1];
                     sentenceCount++;
                 }
             }
@@ -727,6 +729,7 @@ struct Result* parsing() {
     // if not question, use sentences[][] to retrieve terminals
 
     struct Result* result = (struct Result*) malloc(sizeof(struct Result));
+    result->exit = exit;
     result->isSentenceValid = isSentenceValid;
     result->isQuestion = isQuestion;
     result->isWhoAt = isWhoAt;
