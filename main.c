@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "Structs.c"
+#include "Structs.h"
 #include "parsing.c"
-#include "Evaluators.c"
+#include "Evaluators.h"
 
 int main() {
 
