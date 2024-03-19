@@ -1,6 +1,132 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdlib.h>
+
+static int MAX_TOKEN = 1024;
+
+char***** sentence_allocator() {
+    char***** sentences = (char*****) calloc(MAX_TOKEN, sizeof(char****));
+    if (sentences == NULL) {
+        return NULL;
+    }
+    for (int i = 0; i < MAX_TOKEN; i++) {
+        sentences[i] = (char****) calloc(4, sizeof(char***));
+        if (sentences[i] == NULL) {
+            return NULL;
+        }
+    }
+    return sentences;
+}
+void sentence_free(char***** sentences) {
+    for (int i = 0; i < MAX_TOKEN; i++) {
+        free(sentences[i]);
+    }
+    free(sentences);
+}
+char**** action_allocator() {
+    char**** actions = (char****) calloc(MAX_TOKEN, sizeof(char***));
+    if (actions == NULL) {
+        return NULL;
+    }
+    for (int i = 0; i < MAX_TOKEN; i++) {
+        actions[i] = (char***) calloc(6, sizeof(char**));
+        if (actions[i] == NULL) {
+            return NULL;
+        }
+    }
+    return actions;
+}
+void action_condition_free(char**** actions) {
+    for (int i = 0; i<MAX_TOKEN; i++) {
+        free(actions[i]);
+    }
+    free(actions);
+}
+char**** condition_allocator() {
+    char**** conditions = (char****) calloc(MAX_TOKEN, sizeof(char***));
+    if (conditions == NULL) {
+        return NULL;
+    }
+    for (int i = 0; i < MAX_TOKEN; i++) {
+        conditions[i] = (char***) calloc(6, sizeof(char**));
+        if (conditions[i] == NULL) {
+            return NULL;
+        }
+    }
+    return conditions;
+}
+char** subjects_allocator() {
+    char** conditions = (char**) calloc(MAX_TOKEN, sizeof(char*));
+    return conditions;
+}
+void subjects_free(char** subjects) {
+    free(subjects);
+}
+char*** objects_allocator() {
+    char*** objects = (char***) calloc(MAX_TOKEN, sizeof(char**));
+    if (objects == NULL) {
+        return NULL;
+    }
+    for (int i = 0; i < MAX_TOKEN; i++) {
+        objects[i] = (char**) calloc(6, sizeof(char*));
+        if (objects[i] == NULL) {
+            return NULL;
+        }
+    }
+    return objects;
+}
+void objects_free(char*** objects) {
+    for (int i = 0; i<MAX_TOKEN; i++) {
+        free(objects[i]);
+    }
+    free(objects);
+}
+
+
+struct Result {
+    int exit;
+    int isSentenceValid;
+    int isQuestion;
+
+    int isWhoAt;
+    int isWhere;
+    int isTotalItem;
+    int isTotal;
+
+
+    char***** sentences;
+    char**** actions;
+    char**** conditions;
+    char** subjects;
+    char*** objects;
+    char** actionFromTo;
+
+    char*** totalItemQuestion;
+    char** subjectsForTotalItem;
+    char* totalQuestion;
+    char* whereQuestion;
+    char* whoAtQuestion;
+
+    void (*freeResult)(struct Result*);
+};
+
+void freeResult(struct Result* result) {
+    sentence_free(result->sentences);
+    action_condition_free(result->actions);
+    action_condition_free(result->conditions);
+    subjects_free(result->subjects);
+    objects_free(result->objects);
+    subjects_free(result->actionFromTo);
+
+    free(result->totalItemQuestion);
+    free(result->subjectsForTotalItem);
+    free(result->totalQuestion);
+    free(result->whereQuestion);
+    free(result->whoAtQuestion);
+
+    free(result);
+}
 
 int is_valid_digit_number(const char *str) {
     if (strcmp(str, "") == 0)
@@ -18,7 +144,8 @@ int is_curr_keyword(const char *str) {
     if (strcmp(str,"and") == 0 || strcmp(str,"buy") == 0 || strcmp(str,"from") == 0 || strcmp(str,"from") == 0 ||
             strcmp(str,"sell") == 0 || strcmp(str,"to") == 0 || strcmp(str,"go") == 0 || strcmp(str,"if") == 0 ||
             strcmp(str,"at") == 0 || strcmp(str,"has") == 0 || strcmp(str,"less") == 0 || strcmp(str,"than") == 0 ||
-            strcmp(str,"more") == 0 || strcmp(str,"total") == 0 || strcmp(str,"where") == 0 || strcmp(str,"who") == 0) {
+            strcmp(str,"more") == 0 || strcmp(str,"total") == 0 || strcmp(str,"where") == 0 || strcmp(str,"who") == 0 ||
+            strcmp(str,"NOBODY") == 0 || strcmp(str,"NOTHING") == 0 || strcmp(str,"NOWHERE") == 0) {
         return 1;
     }
     return 0;
@@ -31,10 +158,8 @@ int is_curr_question_word(const char *str) {
     return 0;
 }
 
-int main() {
+struct Result* parsing() {
 
-    int MAX_TOKEN = 1024;
-    while (1) {
         char inputStream[MAX_TOKEN];
         fgets(inputStream, MAX_TOKEN, stdin);
 
@@ -42,37 +167,39 @@ int main() {
         char *ptr = inputStream;
         char *token;
 
+        int exit = 0;
+
         int numTokens = 0;
         while ((token = strsep(&ptr, " \n?")) != NULL) {
             if (token[0] == '\0')
                 continue;
             if (strcmp(token, "exit") == 0)
-                return 0;
+                exit = 1;
             tokens[numTokens++] = token;
         }
 
-        char*** sentences[MAX_TOKEN][4];
+        char***** sentences = sentence_allocator();
         //pointer to... 0: start of actions 1: end of actions 2: start of conditions 3: end of conditions
-        char** actions[MAX_TOKEN][6];
+        char**** actions = action_allocator();
         //pointer to... 0: start of subjects 1: end of subjects 2: verb 3: from/to subject 4: start of objects 5: end of objects
         // verb --> "buy"|"sell"|"go"
-        char** conditions[MAX_TOKEN][5];
+        char**** conditions = condition_allocator();
         //pointer to... 0: start of subjects 1: end of subjects 2: verb 3: start of objects 4: end of objects
         // verb --> "has"|"more"|"less"|"at"
-        char* subjects[MAX_TOKEN];
+        char** subjects = subjects_allocator();
         //pointers to subjects
-        char* objects[MAX_TOKEN][2];
+        char*** objects = objects_allocator();
         //pointers to objects
-        char* actionFromTo[MAX_TOKEN];
+        char** actionFromTo = subjects_allocator();
         //subject that is bought from or sold to, accessed with actions[][3]
 
         //Arrays for different type of questions
-        char** totalItemQuestion[3];
+        char*** totalItemQuestion = (char***) calloc(MAX_TOKEN, sizeof(char**));
         //pointer to 0: start of subjects 1: end of subjects 2: item
-        char* subjectsForTotalItem[MAX_TOKEN];
-        char* totalQuestion;
-        char* whereQuestion;
-        char* whoAtQuestion;
+        char** subjectsForTotalItem = (char**) calloc(MAX_TOKEN, sizeof(char*));
+        char* totalQuestion = (char*) calloc(1024, sizeof(char));
+        char* whereQuestion =  (char*) calloc(1024, sizeof(char));;
+        char* whoAtQuestion = (char*) calloc(1024, sizeof(char));;
 
         int sentenceCount = 0;
         int actionCount = 0;
@@ -599,6 +726,21 @@ int main() {
         // use isQuestion to check if it is a question
         //      use isWhoAt|... to check question type, then use the according the question array (e.g. totalItemQuestion[3])
         // if not question, use sentences[][] to retrieve terminals
-        
-    }
+
+        struct Result* result = (struct Result*) malloc(sizeof(struct Result));
+        result->isSentenceValid = isSentenceValid;
+        result->isQuestion = isQuestion;
+        result->isWhoAt = isWhoAt;
+        result->isWhere = isWhere;
+        result->isTotalItem = isTotalItem;
+        result->isTotal = isTotal;
+        result->sentences = sentences;
+        result->totalItemQuestion = totalItemQuestion;
+        result->subjectsForTotalItem = subjectsForTotalItem;
+        result->totalQuestion = totalQuestion;
+        result->whereQuestion = whereQuestion;
+        result->whoAtQuestion = whoAtQuestion;
+
+        return result;
+
 }
