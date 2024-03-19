@@ -20,8 +20,6 @@ int main() {
         if (!input->isSentenceValid) {
             printf("INVALID");
             input->freeResult(input);
-            places->free(places);
-            people->free(people);
             continue;
         }
 
@@ -29,7 +27,7 @@ int main() {
             questionArgs args;
 
 
-            // input loading
+            // loading input
 
             if (input->whoAtQuestion) {
                 args.questionType = "who at";
@@ -54,10 +52,11 @@ int main() {
                 args.person = people->getPerson(people,personName);
             }
 
+            // getting output
 
-
-
-
+            char* outputString = questionEvaluator(&args);
+            printf("%s",outputString);
+            continue;
         }
 
 
