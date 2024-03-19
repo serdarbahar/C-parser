@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include "parsing.h"
 #include <stdlib.h>
 
-static int MAX_TOKEN = 1024;
 
 char***** sentence_allocator() {
     char***** sentences = (char*****) calloc(MAX_TOKEN, sizeof(char****));
@@ -83,33 +83,6 @@ void objects_free(char*** objects) {
     free(objects);
 }
 
-
-struct Result {
-    int exit;
-    int isSentenceValid;
-    int isQuestion;
-
-    int isWhoAt;
-    int isWhere;
-    int isTotalItem;
-    int isTotal;
-
-
-    char***** sentences;
-    char**** actions;
-    char**** conditions;
-    char** subjects;
-    char*** objects;
-    char** actionFromTo;
-
-    char*** totalItemQuestion;
-    char** subjectsForTotalItem;
-    char* totalQuestion;
-    char* whereQuestion;
-    char* whoAtQuestion;
-
-    void (*freeResult)(struct Result*);
-};
 
 void freeResult(struct Result* result) {
     sentence_free(result->sentences);
@@ -578,7 +551,7 @@ struct Result* parsing() {
                 if (strcmp(curr, "and") == 0)
                     subjectState = 2;
                 else if (strcmp(curr, "at") == 0) {
-                    conditions[conditionCount][1] = subjects[subjectCount-1];
+                    conditions[conditionCount][1] = &subjects[subjectCount-1];
                     char *str5 = curr;
                     conditions[conditionCount][2] = &str5;
                     subjectState = 3;

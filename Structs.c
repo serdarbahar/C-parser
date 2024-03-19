@@ -460,4 +460,3 @@ struct People* initializePeople(int initialPersonCapacity) {
     people->free = freePeople;
 
     return people;
-}

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "Structs.c"
-#include "parsing.c"
+#include "parsing.h"
 #include "Evaluators.h"
 
 
