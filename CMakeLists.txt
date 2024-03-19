@@ -7,4 +7,9 @@ add_executable(Interpreter_Project main.c
         hashmap.c
         Structs.c
         parsing.c
+        Evaluators.c
+        Evaluators.h
+        Evaluators.c
+        Evaluators.c
+        Evaluators.c
 )
