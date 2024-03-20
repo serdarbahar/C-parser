@@ -6,7 +6,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-const int MAX_TOKEN;
+extern int MAX_TOKEN;
 
 char***** sentence_allocator();
 void sentence_free(char***** sentences);
@@ -22,6 +22,7 @@ struct Result {
     int exit;
     int isSentenceValid;
     int isQuestion;
+    int sentenceCount;
     int isWhoAt;
     int isWhere;
     int isTotalItem;
@@ -38,8 +39,6 @@ struct Result {
     char* whereQuestion;
     char* whoAtQuestion;
     void (*freeResult)(struct Result*);
-
-    int sentenceCount;
 };
 
 struct Result* parsing();
