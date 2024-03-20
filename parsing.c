@@ -2,20 +2,44 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include "parsing.h"
 
-int static MAX_TOKEN = 1024;
+int MAX_TOKEN = 1024;
 
 char***** sentence_allocator() {
-    char***** sentences = (char*****) calloc(MAX_TOKEN, sizeof(char****));
+    char***** sentences = malloc(MAX_TOKEN * sizeof(char****));
     if (sentences == NULL) {
-        return NULL;
+        // Error handling for failed memory allocation
+        perror("Failed to allocate memory for sentences");
+        exit(EXIT_FAILURE);
     }
+
     for (int i = 0; i < MAX_TOKEN; i++) {
-        sentences[i] = (char****) calloc(4, sizeof(char***));
+        sentences[i] = malloc(4 * sizeof(char***));
         if (sentences[i] == NULL) {
-            return NULL;
+            // Error handling for failed memory allocation
+            perror("Failed to allocate memory for sentences[i]");
+            exit(EXIT_FAILURE);
+        }
+
+        for (int j = 0; j < 4; j++) {
+            sentences[i][j] = malloc(sizeof(char**));
+            if (sentences[i][j] == NULL) {
+                // Error handling for failed memory allocation
+                perror("Failed to allocate memory for sentences[i][j]");
+                exit(EXIT_FAILURE);
+            }
+
+            // Assuming you want to allocate memory for a single pointer at the lowest level
+            sentences[i][j][0] = malloc(sizeof(char*));
+            if (sentences[i][j][0] == NULL) {
+                // Error handling for failed memory allocation
+                perror("Failed to allocate memory for sentences[i][j][0]");
+                exit(EXIT_FAILURE);
+            }
         }
     }
+
     return sentences;
 }
 void sentence_free(char***** sentences) {
@@ -25,18 +49,39 @@ void sentence_free(char***** sentences) {
     free(sentences);
 }
 char**** action_allocator() {
-    char**** actions = (char****) calloc(MAX_TOKEN, sizeof(char***));
+    char**** actions = malloc(MAX_TOKEN * sizeof(char****));
     if (actions == NULL) {
-        printf("problem with memory allocation");
-        return NULL;
+        // Error handling for failed memory allocation
+        perror("Failed to allocate memory for actions");
+        exit(EXIT_FAILURE);
     }
+
     for (int i = 0; i < MAX_TOKEN; i++) {
-        actions[i] = (char***) calloc(6, sizeof(char**));
+        actions[i] = malloc(6 * sizeof(char***));
         if (actions[i] == NULL) {
-            printf("problem with memory allocation");
-            return NULL;
+            // Error handling for failed memory allocation
+            perror("Failed to allocate memory for actions[i]");
+            exit(EXIT_FAILURE);
+        }
+
+        for (int j = 0; j < 6; j++) {
+            actions[i][j] = malloc(sizeof(char**));
+            if (actions[i][j] == NULL) {
+                // Error handling for failed memory allocation
+                perror("Failed to allocate memory for actions[i][j]");
+                exit(EXIT_FAILURE);
+            }
+
+            // Assuming you want to allocate memory for a single pointer at the lowest level
+            actions[i][j][0] = malloc(sizeof(char*));
+            if (actions[i][j][0] == NULL) {
+                // Error handling for failed memory allocation
+                perror("Failed to allocate memory for actions[i][j][0]");
+                exit(EXIT_FAILURE);
+            }
         }
     }
+
     return actions;
 }
 void action_condition_free(char**** actions) {
@@ -48,23 +93,61 @@ void action_condition_free(char**** actions) {
     free(actions);
 }
 char**** condition_allocator() {
-    char**** conditions = (char****) calloc(MAX_TOKEN, sizeof(char***));
-    if (conditions == NULL) {
-        printf("problem with memory allocation");
-        return NULL;
+    char**** actions = calloc(MAX_TOKEN ,sizeof(char****));
+    if (actions == NULL) {
+        // Error handling for failed memory allocation
+        perror("Failed to allocate memory for actions");
+        exit(EXIT_FAILURE);
     }
+
     for (int i = 0; i < MAX_TOKEN; i++) {
-        conditions[i] = (char***) calloc(6, sizeof(char**));
-        if (conditions[i] == NULL) {
-            printf("problem with memory allocation");
-            return NULL;
+        actions[i] = calloc(5, sizeof(char***));
+        if (actions[i] == NULL) {
+            // Error handling for failed memory allocation
+            perror("Failed to allocate memory for actions[i]");
+            exit(EXIT_FAILURE);
+        }
+
+        for (int j = 0; j < 5; j++) {
+            actions[i][j] = calloc(1,sizeof(char**));
+            if (actions[i][j] == NULL) {
+                // Error handling for failed memory allocation
+                perror("Failed to allocate memory for actions[i][j]");
+                exit(EXIT_FAILURE);
+            }
+
+            // Assuming you want to allocate memory for a single pointer at the lowest level
+            actions[i][j][0] = malloc(sizeof(char*));
+            if (actions[i][j][0] == NULL) {
+                // Error handling for failed memory allocation
+                perror("Failed to allocate memory for actions[i][j][0]");
+                exit(EXIT_FAILURE);
+            }
         }
     }
-    return conditions;
+
+    return actions;
 }
 char** subjects_allocator() {
-    char** conditions = (char**) calloc(MAX_TOKEN, sizeof(char*));
-    return conditions;
+    char** subjects = malloc(MAX_TOKEN * sizeof(char*));
+    if (subjects == NULL) {
+        // Error handling for failed memory allocation
+        perror("Failed to allocate memory for subjects");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < MAX_TOKEN; i++) {
+        subjects[i] = malloc(50 * sizeof(char)); // Assuming a maximum length of 49 characters per string
+        if (subjects[i] == NULL) {
+            // Error handling for failed memory allocation
+            perror("Failed to allocate memory for subjects[i]");
+            exit(EXIT_FAILURE);
+        }
+        // Initialize each string to an empty string
+        subjects[i][0] = '\0';
+    }
+
+    return subjects;
 }
 void subjects_free(char** subjects) {
     if (subjects == NULL)
@@ -72,18 +155,34 @@ void subjects_free(char** subjects) {
     free(subjects);
 }
 char*** objects_allocator() {
-    char*** objects = (char***) calloc(MAX_TOKEN, sizeof(char**));
+    char*** objects = malloc(MAX_TOKEN * sizeof(char**));
     if (objects == NULL) {
-        printf("problem with memory allocation");
-        return NULL;
+        // Error handling for failed memory allocation
+        perror("Failed to allocate memory for objects");
+        exit(EXIT_FAILURE);
     }
+
     for (int i = 0; i < MAX_TOKEN; i++) {
-        objects[i] = (char**) calloc(6, sizeof(char*));
+        objects[i] = malloc(2 * sizeof(char*));
         if (objects[i] == NULL) {
-            printf("problem with memory allocation");
-            return NULL;
+            // Error handling for failed memory allocation
+            perror("Failed to allocate memory for objects[i]");
+            exit(EXIT_FAILURE);
+        }
+
+        // Allocate memory for each string
+        for (int j = 0; j < 2; j++) {
+            objects[i][j] = malloc(1024 * sizeof(char)); // Assuming a maximum length of 49 characters per string
+            if (objects[i][j] == NULL) {
+                // Error handling for failed memory allocation
+                perror("Failed to allocate memory for objects[i][j]");
+                exit(EXIT_FAILURE);
+            }
+            // Initialize each string to an empty string
+            objects[i][j][0] = '\0';
         }
     }
+
     return objects;
 }
 void objects_free(char*** objects) {
@@ -94,30 +193,6 @@ void objects_free(char*** objects) {
     }
     free(objects);
 }
-
-struct Result {
-    int exit;
-    int isSentenceValid;
-    int isQuestion;
-    int sentenceCount;
-    int isWhoAt;
-    int isWhere;
-    int isTotalItem;
-    int isTotal;
-    char***** sentences;
-    char**** actions;
-    char**** conditions;
-    char** subjects;
-    char*** objects;
-    char** actionFromTo;
-    char*** totalItemQuestion;
-    char** subjectsForTotalItem;
-    char* totalQuestion;
-    char* whereQuestion;
-    char* whoAtQuestion;
-    void (*freeResult)(struct Result*);
-};
-
 void freeResult(struct Result* result) {
 
     sentence_free(result->sentences);
@@ -135,9 +210,8 @@ void freeResult(struct Result* result) {
 
     free(result);
 }
-
 int is_valid_digit_number(const char *str) {
-    if (strcmp(str, "") == 0)
+    if (str == NULL)
         return 0;
     // Check if each character in the string is a digit
     for (int i = 0; str[i] != '\0'; i++) {
@@ -153,7 +227,7 @@ int is_curr_keyword(const char *str) {
         strcmp(str,"sell") == 0 || strcmp(str,"to") == 0 || strcmp(str,"go") == 0 || strcmp(str,"if") == 0 ||
         strcmp(str,"at") == 0 || strcmp(str,"has") == 0 || strcmp(str,"less") == 0 || strcmp(str,"than") == 0 ||
         strcmp(str,"more") == 0 || strcmp(str,"total") == 0 || strcmp(str,"where") == 0 || strcmp(str,"who") == 0 ||
-        strcmp(str,"NOBODY") == 0 || strcmp(str,"NOTHING") == 0 || strcmp(str,"NOWHERE") == 0) {
+        strcmp(str,"NOBODY") == 0 || strcmp(str,"NOTHING") == 0 || strcmp(str,"NOWHERE") == 0 || strcmp(str, "exit")) {
         return 1;
     }
     return 0;
@@ -179,18 +253,20 @@ struct Result* parsing() {
     char *ptr = inputStream;
     char *token;
 
+    int exitTemp = 0;
     int exit = 0;
-
-
 
     int numTokens = 0;
     while ((token = strsep(&ptr, " \n?")) != NULL) {
         if (token[0] == '\0')
             continue;
         if (strcmp(token, "exit") == 0)
-            exit = 1;
+            exitTemp = 1;
         tokens[numTokens++] = token;
     }
+
+    if (exitTemp && numTokens == 1)
+        exit = 1;
 
     char***** sentences = sentence_allocator();
     //pointer to... 0: start of actions 1: end of actions 2: start of conditions 3: end of conditions
@@ -241,7 +317,8 @@ struct Result* parsing() {
 
     int j = 0;
     while (j < numTokens) {
-        char *curr = tokens[j];
+        char* curr = tokens[j];
+
         if (isQuestion) {
 
             if (isTotal + isTotalItem + isWhere + isWhoAt != 1) {
@@ -265,7 +342,7 @@ struct Result* parsing() {
                         break;
                     }
 
-                    whoAtQuestion = curr;
+                    strcpy(whoAtQuestion, curr);
                 }
                 else {
                     isSentenceValid = 0;
@@ -279,7 +356,7 @@ struct Result* parsing() {
                         isSentenceValid = 0;
                         break;
                     }
-                    whereQuestion = curr;
+                    strcpy(whereQuestion, curr);;
                 }
                 else if (j == 1) {
                     if (strcmp(curr, "where") != 0) {
@@ -299,7 +376,8 @@ struct Result* parsing() {
                         isSentenceValid = 0;
                         break;
                     }
-                    totalQuestion = curr;
+
+                    strcpy(totalQuestion, curr); ;
                 }
                 else if (j == 1) {
                     if (strcmp(curr, "total") != 0) {
@@ -320,7 +398,8 @@ struct Result* parsing() {
                         break;
                     }
                     totalItemQuestion[0] = subjectsForTotalItem;
-                    subjectsForTotalItem[0] = curr;
+                    subjectsForTotalItem[0] = malloc((strlen(curr) + 1) * sizeof(char));
+                    strcpy(subjectsForTotalItem[0], curr);
                     questionState = 1;
                     subjectCountforQ++;
                 }
@@ -338,7 +417,8 @@ struct Result* parsing() {
                         isSentenceValid = 0;
                         break;
                     }
-                    subjectsForTotalItem[subjectCountforQ] = curr;
+                    subjectsForTotalItem[subjectCountforQ] = malloc((strlen(curr) + 1) * sizeof(char));
+                    strcpy(subjectsForTotalItem[subjectCountforQ], curr);
                     subjectCountforQ++;
                     questionState = 1;
                 }
@@ -347,7 +427,8 @@ struct Result* parsing() {
                         isSentenceValid = 0;
                         break;
                     }
-                    char* p = curr;
+                    char* p = malloc(strlen(curr) + 1 * sizeof(char));
+                    strcpy(p,curr);
                     totalItemQuestion[2] = &p;
                     if (++j != numTokens) {
                         isSentenceValid = 0;
@@ -408,7 +489,7 @@ struct Result* parsing() {
                     break;
                 }
 
-                subjects[subjectCount] = curr;
+                strcpy(subjects[subjectCount], curr);
                 actions[actionCount][0] = &subjects[subjectCount];
 
                 subjectCount++;
@@ -423,18 +504,21 @@ struct Result* parsing() {
                     actions[actionCount][1] = &subjects[subjectCount-1];
 
                     if (strcmp(curr, "buy") == 0) {
-                        char *str1 = curr;
-                        actions[actionCount][2] = &str1;
+                        char* str1 = malloc(5*sizeof(char));
+                        strcpy(str1,curr);
+                        *actions[actionCount][2] = str1;
                         verbState = 1;
                     }
                     if (strcmp(curr, "sell") == 0) {
-                        char *str2 = curr;
-                        actions[actionCount][2] = &str2;
+                        char* str1 = malloc(5*sizeof(char));
+                        strcpy(str1,curr);
+                        *actions[actionCount][2] = str1;
                         verbState = 2;
                     }
                     if (strcmp(curr, "go") == 0) {
-                        char *str3 = curr;
-                        actions[actionCount][2] = &str3;
+                        char* str1 = malloc(1024*sizeof(char));
+                        strcpy(str1,curr);
+                        actions[actionCount][2] = &str1;
                         j++; //skipping "to"
                         char *p = tokens[j];
                         if (strcmp(p, "to") != 0) {
@@ -459,7 +543,7 @@ struct Result* parsing() {
                     break;
                 }
 
-                subjects[subjectCount] = curr;
+                strcpy(subjects[subjectCount], curr);
                 subjectCount++;
                 subjectState = 1;
             }
@@ -472,7 +556,7 @@ struct Result* parsing() {
                         break;
                     }
 
-                    objects[objectCount][0] = curr;
+                    strcpy(objects[objectCount][0], curr);;
                     char *p = tokens[++j];
 
                     if (is_valid_digit_number(p)){
@@ -490,9 +574,9 @@ struct Result* parsing() {
                     verbState *= 10;
                     if (j + 1 == numTokens) {
                         isSentenceValid = 1;
-                        sentenceCount++;
                         actions[actionCount][5] = objects[objectCount - 1];
                         sentences[sentenceCount][1] = actions[actionCount];
+                        sentenceCount++;
                     }
                 }
                 else if (verbState == 3) {
@@ -502,8 +586,8 @@ struct Result* parsing() {
                         break;
                     }
 
-                    objects[objectCount][0] = curr;
-                    objects[objectCount][1] = curr;
+                    strcpy(objects[objectCount][0],curr);
+                    strcpy(objects[objectCount][1],curr);
                     actions[actionCount][4] = objects[objectCount];
                     actions[actionCount][5] = objects[objectCount];
 
@@ -511,10 +595,10 @@ struct Result* parsing() {
                     verbState *= 10;
 
                     if (j + 1 == numTokens) {
-                        sentenceCount++;
                         isSentenceValid = 1;
                         actions[actionCount][5] = objects[objectCount - 1];
                         sentences[sentenceCount][1] = actions[actionCount];
+                        sentenceCount++;
                     }
                 }
                 else if (verbState == 10 || verbState == 20 || verbState == 30) {  //"and" or "from/to" or end of actions
@@ -523,15 +607,26 @@ struct Result* parsing() {
                         int endOfActionContinuingWithAnd = 1;
                         while (strcmp(curr, "and") == 0) {
                             curr = tokens[++j];
+                            if (j == numTokens) {
+                                isSentenceValid = 0;
+                                break;
+                            }
                             if (is_valid_digit_number(curr)) {
                                 endOfActionContinuingWithAnd = 0;
-                                objects[objectCount][0] = curr;
+                                strcpy(objects[objectCount][0], curr);
                                 curr = tokens[++j];
-                                objects[objectCount][1] = curr;
+                                strcpy(objects[objectCount][1], curr);
                                 objectCount++;
                                 curr = tokens[++j];
-                                if (j == numTokens)
+                                if (j == numTokens) {
+                                    actions[actionCount][5] =  objects[objectCount - 1];
+                                    sentences[sentenceCount][1] = actions[actionCount];
+                                    sentenceCount++;
                                     break;
+                                }
+                            }
+                            else {
+                                endOfActionContinuingWithAnd = 1;
                             }
                         }
                         j--;
@@ -545,12 +640,20 @@ struct Result* parsing() {
                                (strcmp(curr, "to") == 0 && verbState == 20)) {
                         curr = tokens[++j]; //subject, bought from or sold to
                         actions[actionCount][3] = &actionFromTo[actionCount];
-                        actionFromTo[actionCount] = curr;
+                        strcpy(actionFromTo[actionCount],curr);
+                        if (j + 1 == numTokens) {
+                            isSentenceValid = 1;
+                            actions[actionCount][5] =  objects[objectCount - 1];
+                            sentences[sentenceCount][1] = actions[actionCount];
+                            sentenceCount++;
+                            break;
+                        }
+
                     }
                     else if (j + 1 == numTokens) {
-                        sentenceCount++;
                         actions[actionCount][5] =  objects[objectCount - 1];
                         sentences[sentenceCount][1] = actions[actionCount];
+                        sentenceCount++;
                     }
                     else if (strcmp(curr, "if") == 0) {
                         actions[actionCount][5] = objects[objectCount - 1];
@@ -569,7 +672,6 @@ struct Result* parsing() {
                 }
             }
         }
-
         else if (sentenceState == 2) {
             sentences[sentenceCount][2] = conditions[conditionCount];
             sentenceState = 3;
@@ -589,7 +691,7 @@ struct Result* parsing() {
                     break;
                 }
 
-                subjects[subjectCount] = curr;
+                strcpy(subjects[subjectCount],curr);
                 conditions[conditionCount][0] = &subjects[subjectCount];
                 subjectCount++;
                 subjectState = 1;
@@ -600,8 +702,9 @@ struct Result* parsing() {
                     subjectState = 2;
                 else if (strcmp(curr, "at") == 0) {
                     conditions[conditionCount][1] = &subjects[subjectCount-1];
-                    char *str5 = curr;
-                    conditions[conditionCount][2] = &str5;
+                    char *str5 = malloc(3*sizeof(char));
+                    strcpy(str5,curr);
+                    *(conditions[conditionCount][2]) = str5;
                     subjectState = 3;
                     verbState = 1;
                 }
@@ -609,25 +712,29 @@ struct Result* parsing() {
                     conditions[conditionCount][1] = &subjects[subjectCount-1];
                     curr = tokens[++j];
                     if (strcmp(curr, "more") == 0) { //check follow up word "than"
-                        char *str6 = curr;
-                        conditions[conditionCount][2] = &str6;
+                        char *str6 = malloc(3*sizeof(char));
+                        strcpy(str6,curr);
+                        *(conditions[conditionCount][2]) = str6;
                         curr = tokens[++j]; //skipping than
                         subjectState = 3;
                         verbState = 2;
                     }
                     else if (strcmp(curr, "less") == 0) {
-                        char *str7 = curr;
-                        conditions[conditionCount][2] = &str7;
+                        char *str7 = malloc(3*sizeof(char));
+                        strcpy(str7,curr);
+                        *(conditions[conditionCount][2]) = str7;
                         curr = tokens[++j]; //skipping than
                         subjectState = 3;
                         verbState = 2;
                     }
                     else if (is_valid_digit_number(curr)) {
-                        char *str8 = "has";
-                        conditions[conditionCount][2] = &str8;
+                        curr = tokens[--j];
+                        char *str8 = malloc(3*sizeof(char));
+                        strcpy(str8,curr);
+                        *(conditions[conditionCount][2]) = str8;
                         subjectState = 3;
                         verbState = 2;
-                        j--;
+
                     }
                     else {
                         isSentenceValid = 0;
@@ -643,13 +750,14 @@ struct Result* parsing() {
                     break;
                 }
 
-                subjects[subjectCount] = curr;
+                strcpy(subjects[subjectCount],curr);
                 subjectCount++;
                 subjectState = 1;
             }
 
             else if (subjectState == 3) { //object sequence expected
                 if (verbState == 2) {
+
                     conditions[conditionCount][3] = objects[objectCount];
 
                     if (!is_valid_digit_number(curr)) {
@@ -657,8 +765,7 @@ struct Result* parsing() {
                         break;
                     }
 
-
-                    objects[objectCount][0] = curr;
+                    strcpy(objects[objectCount][0],curr);
                     char *p = tokens[++j];
 
                     if (is_curr_keyword(p)) {
@@ -673,9 +780,10 @@ struct Result* parsing() {
                         while (strcmp(curr, "and") == 0 && j < numTokens) {
                             curr = tokens[++j];
                             if (is_valid_digit_number(curr)) {
-                                objects[objectCount][0] = curr;
+                                strcpy(objects[objectCount][0],curr);
                                 curr = tokens[++j];
-                                objects[objectCount][1] = curr;
+                                //check if curr is a keyword
+                                strcpy(objects[objectCount][1],curr);
                                 curr = tokens[++j];
                                 objectCount++;
                             } else {
@@ -683,6 +791,23 @@ struct Result* parsing() {
                                 break;
                             }
                         }
+                    }
+                    else {
+                        isSentenceValid = 1;
+                        conditions[conditionCount][4] = objects[objectCount - 1];
+                        sentences[sentenceCount][3] = conditions[conditionCount];
+                        sentenceCount++;
+                        conditionCount++;
+                        break;
+                    }
+
+                    if (j == numTokens) {
+                        isSentenceValid = 1;
+                        conditions[conditionCount][4] = objects[objectCount - 1];
+                        sentences[sentenceCount][3] = conditions[conditionCount];
+                        sentenceCount++;
+                        conditionCount++;
+                        break;
                     }
 
                     conditions[conditionCount][4] = objects[objectCount - 1];
@@ -698,13 +823,21 @@ struct Result* parsing() {
                     conditions[conditionCount][3] = objects[objectCount];
                     conditions[conditionCount][4] = objects[objectCount];
 
-                    objects[objectCount][0] = curr;
-                    objects[objectCount][1] = curr;
+                    strcpy(objects[objectCount][0],curr);
+                    strcpy(objects[objectCount][1],curr);
 
                     objectCount++;
 
 
                     curr = tokens[++j];//will be equal to "and" if possible
+
+
+                    if (j == numTokens) {
+                        isSentenceValid = 1;
+                        conditions[conditionCount][5] = objects[objectCount - 1];
+                        sentences[sentenceCount][1] = actions[actionCount];
+                        sentenceCount++;
+                    }
                 }
 
                 isSentenceValid = 1;
@@ -713,8 +846,13 @@ struct Result* parsing() {
                 int isNewSentence = 0;
                 if (curr == NULL) {
                     sentences[sentenceCount][3] = conditions[conditionCount];
+                    sentences[sentenceCount][1] = actions[actionCount];
+                    sentenceCount++;
+                    isSentenceValid = 1;
+
                     break;
                 }
+
                 if (strcmp(curr, "and") == 0) {
                     while ((curr = tokens[i++])) {
                         if (strcmp(curr, "has") == 0 || strcmp(curr, "at") == 0) {
@@ -734,6 +872,7 @@ struct Result* parsing() {
                 subjectState = 0;
                 verbState = 0;
                 conditionCount++;
+
                 if (isNewSentence) {
                     sentenceState = 0;
                     sentences[sentenceCount][3] = conditions[conditionCount - 1];
@@ -759,6 +898,11 @@ struct Result* parsing() {
     result->isTotalItem = isTotalItem;
     result->isTotal = isTotal;
     result->sentences = sentences;
+    result->actions = actions;
+    result->conditions = conditions;
+    result->subjects = subjects;
+    result->objects = objects;
+    result->actionFromTo = actionFromTo;
     result->totalItemQuestion = totalItemQuestion;
     result->subjectsForTotalItem = subjectsForTotalItem;
     result->totalQuestion = totalQuestion;
@@ -767,7 +911,7 @@ struct Result* parsing() {
     result->freeResult = freeResult;
     result->sentenceCount = sentenceCount;
 
-    printf("%d\n",result->sentenceCount);
+
     return result;
 
 }
