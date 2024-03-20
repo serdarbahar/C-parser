@@ -12,21 +12,20 @@ int main() {
 
     while (1) {
 
-        struct Result *input = parsing();
+        struct Result* input = parsing();
 
         if (input->exit)
             break;
 
-        if (!input->isSentenceValid) {
-            printf("INVALID");
-            input->freeResult(input);
 
+        if (!input->isSentenceValid) {
+            printf("INVALID\n");
+            input->freeResult(input);
             continue;
         }
 
         if (input->isQuestion) {
             questionArgs args;
-
 
             // loading input
 
@@ -71,10 +70,10 @@ int main() {
 
 
         else {
-            int sentenceCount = 0;
-            while (input->sentences[sentenceCount] != NULL) {
-                sentenceCount++;
-            }
+            printf("%d\n", input->sentenceCount);
+            int sentenceCount = input->sentenceCount;
+
+            printf("%d\n", sentenceCount);
 
             for (int i = 0; i<sentenceCount; i++) {
                 char**** currSentence = input->sentences[i];
@@ -129,7 +128,7 @@ int main() {
                                         currAction[4][0] + k * sizeof(char *) != NULL &&
                                         currAction[4][1] + k * sizeof(char *) <= currAction[5][1] &&
                                         currAction[4][1] + k * sizeof(char *) != NULL; k++) {
-                            printf("%d\n",1);
+
                             ItemWithQuantity *item = (ItemWithQuantity*) malloc(sizeof(ItemWithQuantity));
                             item->name = currAction[4][1] + k * sizeof(char *);
                             item->quantity = atoi(currAction[4][0] + k * sizeof(char *));
@@ -138,60 +137,66 @@ int main() {
                         actionArguments->itemChain = items;
                     }
 
+                    printf("%d\n",1);
+
                     //EVALUATE ACTION HERE
 
                     free(items);
                     free(actionArguments);
+
+                    printf("%d\n",1);
                 }
                 //conditions
-                for (int j = 0; currSentence[0][j] <= currSentence[1][0]; j++) {
-                    char*** currCondition = &currSentence[0][j];
-                    conditionArgs *conditionArguments = (conditionArgs*) calloc(1,sizeof(conditionArgs));
+                if (currSentence[2] != NULL) {
+                    printf("%d\n",1);
+                    for (int j = 0; currSentence[2][j] <= currSentence[3][0]; j++) {
+                        printf("%d\n", 1);
+                        char ***currCondition = &currSentence[0][j];
+                        conditionArgs *conditionArguments = (conditionArgs *) calloc(1, sizeof(conditionArgs));
 
-                    if (strcmp(*currCondition[2],"has") == 0) {
-                        conditionArguments->conditionType = "has";
-                    }
-                    else if (strcmp(*currCondition[2],"more") == 0) {
-                        conditionArguments->conditionType = "has more than";
-                    }
-                    else if (strcmp(*currCondition[2],"less") == 0) {
-                        conditionArguments->conditionType = "has less than";
-                    }
-                    else if (strcmp(*currCondition[2],"at") == 0) {
-                        conditionArguments->conditionType = "at";
-                    }
-
-                    //subject chain
-                    int subjectsChainSize = 0;
-                    for (int k = 0; currCondition[0][k] <= currCondition[1][0] && currCondition[0][k] != NULL; k++) {
-                        subjectsChainSize++;
-                    }
-                    char* subjectChain[subjectsChainSize];
-                    for (int k = 0; currCondition[0][k] <= currCondition[1][0] && currCondition[0][k] != NULL; k++) {
-                        subjectChain[k] = currCondition[0][k];
-                    }
-                    conditionArguments->personChain = subjectChain;
-                    conditionArguments->personChainSize = subjectsChainSize;
-
-                    ItemWithQuantity** items = (ItemWithQuantity**) malloc(1024*sizeof(ItemWithQuantity));
-                    if (strcmp(conditionArguments->conditionType,"at") == 0) {
-                        conditionArguments->place = *currCondition[3];
-                    }
-                    else {
-                        for (int k = 0; currCondition[3][0] + k * sizeof(char *) <= currCondition[4][0] &&
-                                        currCondition[3][0] + k * sizeof(char *) != NULL &&
-                                        currCondition[3][1] + k * sizeof(char *) <= currCondition[4][1] &&
-                                        currCondition[3][1] + k * sizeof(char *) != NULL; k++) {
-                            printf("%d\n",1);
-                            ItemWithQuantity *item = (ItemWithQuantity*) malloc(sizeof(ItemWithQuantity));
-                            item->name = currCondition[3][1] + k * sizeof(char *);
-                            item->quantity = atoi(currCondition[3][0] + k * sizeof(char *));
-                            items[k] = item;
+                        if (strcmp(*currCondition[2], "has") == 0) {
+                            conditionArguments->conditionType = "has";
+                        } else if (strcmp(*currCondition[2], "more") == 0) {
+                            conditionArguments->conditionType = "has more than";
+                        } else if (strcmp(*currCondition[2], "less") == 0) {
+                            conditionArguments->conditionType = "has less than";
+                        } else if (strcmp(*currCondition[2], "at") == 0) {
+                            conditionArguments->conditionType = "at";
                         }
-                        conditionArguments->itemChain = items;
+
+                        //subject chain
+                        int subjectsChainSize = 0;
+                        for (int k = 0;
+                             currCondition[0][k] <= currCondition[1][0] && currCondition[0][k] != NULL; k++) {
+                            subjectsChainSize++;
+                        }
+                        char *subjectChain[subjectsChainSize];
+                        for (int k = 0;
+                             currCondition[0][k] <= currCondition[1][0] && currCondition[0][k] != NULL; k++) {
+                            subjectChain[k] = currCondition[0][k];
+                        }
+                        conditionArguments->personChain = subjectChain;
+                        conditionArguments->personChainSize = subjectsChainSize;
+
+                        ItemWithQuantity **items = (ItemWithQuantity **) malloc(1024 * sizeof(ItemWithQuantity));
+                        if (strcmp(conditionArguments->conditionType, "at") == 0) {
+                            conditionArguments->place = *currCondition[3];
+                        } else {
+                            for (int k = 0; currCondition[3][0] + k * sizeof(char *) <= currCondition[4][0] &&
+                                            currCondition[3][0] + k * sizeof(char *) != NULL &&
+                                            currCondition[3][1] + k * sizeof(char *) <= currCondition[4][1] &&
+                                            currCondition[3][1] + k * sizeof(char *) != NULL; k++) {
+                                printf("%d\n", 1);
+                                ItemWithQuantity *item = (ItemWithQuantity *) malloc(sizeof(ItemWithQuantity));
+                                item->name = currCondition[3][1] + k * sizeof(char *);
+                                item->quantity = atoi(currCondition[3][0] + k * sizeof(char *));
+                                items[k] = item;
+                            }
+                            conditionArguments->itemChain = items;
+                        }
+                        //EVALUATE CONDITION
+                        free(conditionArguments);
                     }
-                    //EVALUATE CONDITION
-                    free(conditionArguments);
                 }
 
 

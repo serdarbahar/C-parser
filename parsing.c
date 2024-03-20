@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include "parsing.h"
 #include <stdlib.h>
 
+int static MAX_TOKEN = 1024;
 
 char***** sentence_allocator() {
     char***** sentences = (char*****) calloc(MAX_TOKEN, sizeof(char****));
@@ -27,17 +27,21 @@ void sentence_free(char***** sentences) {
 char**** action_allocator() {
     char**** actions = (char****) calloc(MAX_TOKEN, sizeof(char***));
     if (actions == NULL) {
+        printf("problem with memory allocation");
         return NULL;
     }
     for (int i = 0; i < MAX_TOKEN; i++) {
         actions[i] = (char***) calloc(6, sizeof(char**));
         if (actions[i] == NULL) {
+            printf("problem with memory allocation");
             return NULL;
         }
     }
     return actions;
 }
 void action_condition_free(char**** actions) {
+    if (actions == NULL)
+        return;
     for (int i = 0; i<MAX_TOKEN; i++) {
         free(actions[i]);
     }
@@ -46,11 +50,13 @@ void action_condition_free(char**** actions) {
 char**** condition_allocator() {
     char**** conditions = (char****) calloc(MAX_TOKEN, sizeof(char***));
     if (conditions == NULL) {
+        printf("problem with memory allocation");
         return NULL;
     }
     for (int i = 0; i < MAX_TOKEN; i++) {
         conditions[i] = (char***) calloc(6, sizeof(char**));
         if (conditions[i] == NULL) {
+            printf("problem with memory allocation");
             return NULL;
         }
     }
@@ -61,30 +67,59 @@ char** subjects_allocator() {
     return conditions;
 }
 void subjects_free(char** subjects) {
+    if (subjects == NULL)
+        return;
     free(subjects);
 }
 char*** objects_allocator() {
     char*** objects = (char***) calloc(MAX_TOKEN, sizeof(char**));
     if (objects == NULL) {
+        printf("problem with memory allocation");
         return NULL;
     }
     for (int i = 0; i < MAX_TOKEN; i++) {
         objects[i] = (char**) calloc(6, sizeof(char*));
         if (objects[i] == NULL) {
+            printf("problem with memory allocation");
             return NULL;
         }
     }
     return objects;
 }
 void objects_free(char*** objects) {
+    if (objects == NULL)
+        return;
     for (int i = 0; i<MAX_TOKEN; i++) {
         free(objects[i]);
     }
     free(objects);
 }
 
+struct Result {
+    int exit;
+    int isSentenceValid;
+    int isQuestion;
+    int sentenceCount;
+    int isWhoAt;
+    int isWhere;
+    int isTotalItem;
+    int isTotal;
+    char***** sentences;
+    char**** actions;
+    char**** conditions;
+    char** subjects;
+    char*** objects;
+    char** actionFromTo;
+    char*** totalItemQuestion;
+    char** subjectsForTotalItem;
+    char* totalQuestion;
+    char* whereQuestion;
+    char* whoAtQuestion;
+    void (*freeResult)(struct Result*);
+};
 
 void freeResult(struct Result* result) {
+
     sentence_free(result->sentences);
     action_condition_free(result->actions);
     action_condition_free(result->conditions);
@@ -133,14 +168,20 @@ int is_curr_question_word(const char *str) {
 
 struct Result* parsing() {
 
-    char inputStream[MAX_TOKEN];
+    char inputStream[MAX_TOKEN+1];
+
+
     fgets(inputStream, MAX_TOKEN, stdin);
+
+
 
     char *tokens[MAX_TOKEN];
     char *ptr = inputStream;
     char *token;
 
     int exit = 0;
+
+
 
     int numTokens = 0;
     while ((token = strsep(&ptr, " \n?")) != NULL) {
@@ -195,6 +236,8 @@ struct Result* parsing() {
     int isTotalItem = 0;
     int isTotal = 0;
     int questionCheck = 0;
+
+
 
     int j = 0;
     while (j < numTokens) {
@@ -446,6 +489,8 @@ struct Result* parsing() {
                     objectCount++;
                     verbState *= 10;
                     if (j + 1 == numTokens) {
+                        isSentenceValid = 1;
+                        sentenceCount++;
                         actions[actionCount][5] = objects[objectCount - 1];
                         sentences[sentenceCount][1] = actions[actionCount];
                     }
@@ -466,6 +511,8 @@ struct Result* parsing() {
                     verbState *= 10;
 
                     if (j + 1 == numTokens) {
+                        sentenceCount++;
+                        isSentenceValid = 1;
                         actions[actionCount][5] = objects[objectCount - 1];
                         sentences[sentenceCount][1] = actions[actionCount];
                     }
@@ -501,6 +548,7 @@ struct Result* parsing() {
                         actionFromTo[actionCount] = curr;
                     }
                     else if (j + 1 == numTokens) {
+                        sentenceCount++;
                         actions[actionCount][5] =  objects[objectCount - 1];
                         sentences[sentenceCount][1] = actions[actionCount];
                     }
@@ -701,7 +749,8 @@ struct Result* parsing() {
     //      use isWhoAt|... to check question type, then use the according the question array (e.g. totalItemQuestion[3])
     // if not question, use sentences[][] to retrieve terminals
 
-    struct Result* result = (struct Result*) malloc(sizeof(struct Result));
+
+    struct Result* result = malloc(sizeof(struct Result));
     result->exit = exit;
     result->isSentenceValid = isSentenceValid;
     result->isQuestion = isQuestion;
@@ -715,7 +764,10 @@ struct Result* parsing() {
     result->totalQuestion = totalQuestion;
     result->whereQuestion = whereQuestion;
     result->whoAtQuestion = whoAtQuestion;
+    result->freeResult = freeResult;
+    result->sentenceCount = sentenceCount;
 
+    printf("%d\n",result->sentenceCount);
     return result;
 
 }

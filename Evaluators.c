@@ -1,13 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Structs.c"
-#include "parsing.c"
+#include "Structs.h"
+#include "parsing.h"
 #include "Evaluators.h"
 
 typedef int boolean;
-
-
 
 /*
  * Possible action types : "buy", "buy from", "sell", "sell to", "go to"

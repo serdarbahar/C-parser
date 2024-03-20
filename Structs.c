@@ -356,8 +356,8 @@ void freePeople(struct People* people) {
 struct People* initializePeople(int initialPersonCapacity) {
     struct People *people = malloc(sizeof(struct People));
 
-    people->personNames = calloc(initialPersonCapacity, sizeof(char*));
-    people->personPointers = calloc(initialPersonCapacity, sizeof(struct Person*));
+    people->personNames = calloc(initialPersonCapacity, sizeof(char *));
+    people->personPointers = calloc(initialPersonCapacity, sizeof(struct Person *));
 
     people->numOfPeople = 0;
     people->maxNumOfPeople = initialPersonCapacity;
@@ -368,3 +368,4 @@ struct People* initializePeople(int initialPersonCapacity) {
     people->free = freePeople;
 
     return people;
+}
