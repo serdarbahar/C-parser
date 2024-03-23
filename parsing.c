@@ -227,10 +227,20 @@ int is_curr_keyword(const char *str) {
         strcmp(str,"sell") == 0 || strcmp(str,"to") == 0 || strcmp(str,"go") == 0 || strcmp(str,"if") == 0 ||
         strcmp(str,"at") == 0 || strcmp(str,"has") == 0 || strcmp(str,"less") == 0 || strcmp(str,"than") == 0 ||
         strcmp(str,"more") == 0 || strcmp(str,"total") == 0 || strcmp(str,"where") == 0 || strcmp(str,"who") == 0 ||
-        strcmp(str,"NOBODY") == 0 || strcmp(str,"NOTHING") == 0 || strcmp(str,"NOWHERE") == 0 || strcmp(str, "exit") == 0) {
+        strcmp(str,"NOBODY") == 0 || strcmp(str,"NOTHING") == 0 || strcmp(str,"NOWHERE") == 0 || strcmp(str, "exit") == 0
+        || strcmp(str, "?") == 0) {
         return 1;
     }
     return 0;
+}
+
+int curr_contains_only_alphanumeric(const char *str) {
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (!(str[i] >= 'A' && str[i] <= 'Z') && !(str[i]>='a' && str[i]<='z') && str[i] != '_' && !(str[i] >= '0' && str[i]<='9')) {
+            return 0;
+        }
+    }
+    return 1;
 }
 
 int is_curr_question_word(const char *str) {
@@ -286,6 +296,9 @@ struct Result* parsing() {
 
     //Arrays for different type of questions
     char*** totalItemQuestion = (char***) calloc(MAX_TOKEN, sizeof(char**));
+    totalItemQuestion[0] = malloc(sizeof(char*));
+    totalItemQuestion[1] = malloc(sizeof(char*));
+    totalItemQuestion[2] = malloc(sizeof(char*));
     //pointer to 0: start of subjects 1: end of subjects 2: item
     char** subjectsForTotalItem = (char**) calloc(MAX_TOKEN, sizeof(char*));
     char* totalQuestion = (char*) calloc(1024, sizeof(char));
@@ -318,7 +331,13 @@ struct Result* parsing() {
 
     int j = 0;
     while (j < numTokens) {
+
         char* curr = tokens[j];
+
+        if (!isQuestion && !curr_contains_only_alphanumeric(curr)) {
+            isSentenceValid = 0;
+            break;
+        }
 
         if (isQuestion) {
 
@@ -342,18 +361,32 @@ struct Result* parsing() {
                         isSentenceValid = 0;
                         break;
                     }
-
+                    if (!curr_contains_only_alphanumeric(curr)) {
+                        isSentenceValid = 0;
+                        break;
+                    }
                     strcpy(whoAtQuestion, curr);
+                }
+                else if (j==3) {
+                    if (strcmp(curr, "?") != 0) {
+                        isSentenceValid = 0;
+                        break;
+                    }
+                    else
+                        isSentenceValid = 1;
                 }
                 else {
                     isSentenceValid = 0;
                     break;
                 }
             }
-
             else if (isWhere) {
                 if (j == 0) {
                     if (is_curr_keyword(curr)) {
+                        isSentenceValid = 0;
+                        break;
+                    }
+                    if (!curr_contains_only_alphanumeric(curr)) {
                         isSentenceValid = 0;
                         break;
                     }
@@ -365,19 +398,30 @@ struct Result* parsing() {
                         break;
                     }
                 }
+                else if (j == 2) {
+                    if (strcmp(curr, "?") != 0) {
+                        isSentenceValid = 0;
+                        break;
+                    }
+                    else {
+                        isSentenceValid = 1;
+                    }
+                }
                 else {
                     isSentenceValid = 0;
                     break;
                 }
             }
-
             else if (isTotal) {
                 if (j == 0) {
                     if (is_curr_keyword(curr)) {
                         isSentenceValid = 0;
                         break;
                     }
-
+                    if (!curr_contains_only_alphanumeric(curr)) {
+                        isSentenceValid = 0;
+                        break;
+                    }
                     strcpy(totalQuestion, curr);
                 }
                 else if (j == 1) {
@@ -386,15 +430,28 @@ struct Result* parsing() {
                         break;
                     }
                 }
+                else if (j == 2) {
+                    if (strcmp(curr, "?") != 0) {
+                        isSentenceValid = 0;
+                        break;
+                    }
+                    else {
+                        isSentenceValid = 1;
+                    }
+                }
+
                 else {
                     isSentenceValid = 0;
                     break;
                 }
             }
-
             else if (isTotalItem) {
                 if (questionState == 0) { //subject sequence expected
                     if (is_curr_keyword(curr)) {
+                        isSentenceValid = 0;
+                        break;
+                    }
+                    if (!curr_contains_only_alphanumeric(curr)) {
                         isSentenceValid = 0;
                         break;
                     }
@@ -412,9 +469,17 @@ struct Result* parsing() {
                     else if (strcmp(curr, "and") == 0) {
                         questionState = 2;
                     }
+                    else {
+                        isSentenceValid = 0;
+                        break;
+                    }
                 }
                 else if (questionState == 2) {
                     if (is_curr_keyword(curr)) {
+                        isSentenceValid = 0;
+                        break;
+                    }
+                    if (!curr_contains_only_alphanumeric(curr)) {
                         isSentenceValid = 0;
                         break;
                     }
@@ -424,16 +489,29 @@ struct Result* parsing() {
                     questionState = 1;
                 }
                 else if (questionState == 3) {
+
                     if (is_curr_keyword(curr)) {
                         isSentenceValid = 0;
                         break;
                     }
-                    char* p = malloc(strlen(curr) + 1 * sizeof(char));
-                    strcpy(p,curr);
-                    totalItemQuestion[2] = &p;
-                    if (++j != numTokens) {
+                    if (!curr_contains_only_alphanumeric(curr)) {
                         isSentenceValid = 0;
                         break;
+                    }
+                    char* p = malloc((strlen(curr) + 1) * sizeof(char));
+                    strcpy(p,curr);
+                    *totalItemQuestion[2] = p;
+                    j++;
+
+
+                    if (j == numTokens) {
+                        isSentenceValid = 0;
+                        break;
+                    }
+
+                    if (strcmp(tokens[j],"?") == 0 && j+1 == numTokens) {
+
+                        isSentenceValid = 1;
                     }
                 }
             }
@@ -445,22 +523,22 @@ struct Result* parsing() {
             if (!questionCheck) {
                 while (i < numTokens) {
                     p = tokens[i];
-                    if (strcmp(p, "total") == 0 && i + 1 == numTokens) {
+                    if (strcmp(p, "total") == 0 && i + 2 == numTokens) {
                         isTotal = 1;
                         isQuestion = 1;
-                        isSentenceValid = 1;
-                    } else if (strcmp(p, "total") == 0 && i + 1 < numTokens) {
+                        isSentenceValid = 0;
+                    } else if (strcmp(p, "total") == 0 && i + 3 == numTokens) {
                         isTotalItem = 1;
                         isQuestion = 1;
-                        isSentenceValid = 1;
-                    } else if (strcmp(p, "where") == 0 && i + 1 == numTokens) {
+                        isSentenceValid = 0;
+                    } else if (strcmp(p, "where") == 0 && i + 2 == numTokens) {
                         isWhere = 1;
                         isQuestion = 1;
-                        isSentenceValid = 1;
+                        isSentenceValid = 0;
                     } else if (strcmp(p, "who") == 0 && i == 0) {
                         isWhoAt = 1;
                         isQuestion = 1;
-                        isSentenceValid = 1;
+                        isSentenceValid = 0;
                     } else if (is_curr_question_word(p)) {
                         isSentenceValid = 0;
                         break;

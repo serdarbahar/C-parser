@@ -73,7 +73,7 @@ int actionEvaluator(actionArgs* args, struct People* people, struct PlacesList* 
 
         // make sure that there is only 1 seller
         if (args->personChain2Size != 1) {
-            printf("INVALID");
+            printf("INVALID\n");
             return 1;
         }
 
@@ -89,7 +89,7 @@ int actionEvaluator(actionArgs* args, struct People* people, struct PlacesList* 
         }
 
         if (sellerIsBuyer) {
-            printf("INVALID");
+            printf("INVALID\n");
             return 1;
         }
 
@@ -132,7 +132,7 @@ int actionEvaluator(actionArgs* args, struct People* people, struct PlacesList* 
 
         // make sure there is only 1 buyer
         if (args->personChain2Size != 1) {
-            printf("INVALID");
+            printf("INVALID\n");
             return 1;
         }
 
@@ -148,7 +148,7 @@ int actionEvaluator(actionArgs* args, struct People* people, struct PlacesList* 
         }
 
         if (buyerIsSeller) {
-            printf("INVALID");
+            printf("INVALID\n");
             return 1;
         }
 
