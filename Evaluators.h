@@ -43,9 +43,9 @@ typedef struct {
 typedef struct {
     char* questionType;
 
-    struct Person* person;
+    struct Person* person; // used in all questions except totalItem (because they only involve one person)
 
-    char** personChain; // only used in totalItem question
+    struct Person** personChain; // only used in totalItem question
     int personChainSize;
 
     char* itemName;
@@ -55,7 +55,6 @@ typedef struct {
 
 int actionEvaluator(actionArgs* args, struct People* people, struct PlacesList* places);
 int conditionEvaluator(conditionArgs* args, struct People* people, struct PlacesList* places);
-int ifEvaluator(actionArgs* actionArgs, conditionArgs* conditionArgs, struct People* people, struct PlacesList* places);
 char* questionEvaluator(questionArgs* args);
 
 #endif //INTERPRETER_PROJECT_EVALUATORS_H

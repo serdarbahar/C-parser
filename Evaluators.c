@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "Structs.h"
-#include "parsing.h"
 #include "Evaluators.h"
 
 typedef int boolean;
@@ -253,7 +252,7 @@ int conditionEvaluator(conditionArgs* args, struct People* people, struct Places
         return everyoneHasExactQuantity;
     }
 
-    if (strcmp(conditionType, "has less than") == 0) {
+    if (strcmp(conditionType, "less") == 0) {
 
         boolean everyoneHasLessThanQuantity = 1;
 
@@ -276,7 +275,7 @@ int conditionEvaluator(conditionArgs* args, struct People* people, struct Places
         return everyoneHasLessThanQuantity;
     }
 
-    if (strcmp(conditionType, "has more than") == 0) {
+    if (strcmp(conditionType, "more") == 0) {
 
         boolean everyoneHasMoreThanQuantity = 1;
 
@@ -306,20 +305,6 @@ int conditionEvaluator(conditionArgs* args, struct People* people, struct Places
 
 }
 
-/**
- * Evaluates the conditions and does the action if the conditions are true
- * returns -10 if the conditions are false, returns the return value of the actionEvaluator otherwise
- */
-int ifEvaluator(actionArgs* actionArgs, conditionArgs* conditionArgs, struct People* people, struct PlacesList* places) {
-
-    int conditionResult = conditionEvaluator(conditionArgs, people, places);
-
-    if (conditionResult)
-        return actionEvaluator(actionArgs, people, places);
-    else
-        return -10;
-
-}
 
 /**
  * Question types : "who at", "total", "total item", "where"
@@ -337,7 +322,7 @@ char* questionEvaluator(questionArgs* args) {
         for (int personIdx = 0; personIdx < numOfPeople; personIdx++) {
 
             char* personName = args->place->peopleInPlace[personIdx]->name;
-            int personNameLength = strlen(personName);
+            unsigned long personNameLength = strlen(personName);
 
             // resizing if resultString's size is not enough
             if (resultStringIdx + personNameLength + 10 > resultMaxSize) {
@@ -388,8 +373,8 @@ char* questionEvaluator(questionArgs* args) {
             char quantityStr[10];
             sprintf(quantityStr, "%d", quantity);
 
-            int itemNameLength = strlen(itemName);
-            int quantityLength = strlen(quantityStr);
+            unsigned long itemNameLength = strlen(itemName);
+            unsigned long quantityLength = strlen(quantityStr);
 
             // resizing if resultString's size is not enough
             if (resultStringIdx + itemNameLength + quantityLength + 10 > resultMaxSize) {
@@ -417,33 +402,42 @@ char* questionEvaluator(questionArgs* args) {
                 resultString[resultStringIdx++] = 'd';
                 resultString[resultStringIdx++] = ' ';
             }
-            else {
+
+            else
                 resultString[resultStringIdx] = '\0';
-            }
         }
 
-        char* temp = realloc(resultString, resultStringIdx + 1);
-        if (temp == NULL) {
-            printf("Memory allocation failed\n");
-            return NULL;
-        }
-        resultString = temp;
+//        char* temp = realloc(resultString, resultStringIdx + 1);
+//        if (temp == NULL) {
+//            printf("Memory allocation failed\n");
+//            return NULL;
+//        }
+//        resultString = temp;
 
         return resultString;
     }
 
     else if (strcmp(args->questionType, "total item") == 0) {
+        int totalQuantity = 0;
+        char* itemName = args->itemName;
+        int numOfPeople = args->personChainSize;
+        for (int i=0; i<numOfPeople; i++) {
+            struct Person* person = args->personChain[i];
+            totalQuantity += person->getItemQuantity(person, itemName);
+        }
 
+        char* resultString = calloc(20, sizeof(char));
+        sprintf(resultString, "%d", totalQuantity);
+
+        return resultString;
     }
 
     else if (strcmp(args->questionType, "where") == 0) {
         return args->person->location->name;
     }
 
-
     else {
         printf("Invalid question type\n");
         return NULL;
     }
-
 }

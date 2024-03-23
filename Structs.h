@@ -40,7 +40,7 @@ struct Place {
     void (*free)(struct Place* self);
 };
 
-struct Place* initializePlace(char* name, int initialPersonCapacity);
+struct Place* initializePlace(char* name, int initialPersonCapacity, struct PlacesList* places);
 
 // PlacesList struct and its functions
 struct PlacesList {
