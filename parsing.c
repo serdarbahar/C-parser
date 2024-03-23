@@ -521,6 +521,9 @@ struct Result* parsing() {
                         strcpy(str1,curr);
                         *actions[actionCount][2] = str1;
                         j++; //skipping "to"
+                        if (j==numTokens) {
+                            break;
+                        }
                         char *p = tokens[j];
                         if (strcmp(p, "to") != 0) {
                             isSentenceValid = 0;
@@ -558,7 +561,14 @@ struct Result* parsing() {
                     }
 
                     strcpy(objects[objectCount][0], curr);
+
+                    if (j+1==numTokens) {
+                        isSentenceValid = 0;
+                        break;
+                    }
                     char *p = tokens[++j];
+
+
 
                     if (is_valid_digit_number(p)){
                         isSentenceValid = 0;
@@ -608,14 +618,21 @@ struct Result* parsing() {
                         int endOfActionContinuingWithAnd = 1;
                         while (strcmp(curr, "and") == 0) {
                             curr = tokens[++j];
+
                             if (j == numTokens) {
                                 isSentenceValid = 0;
                                 break;
                             }
+
+
                             if (is_valid_digit_number(curr)) {
                                 endOfActionContinuingWithAnd = 0;
                                 strcpy(objects[objectCount][0], curr);
                                 curr = tokens[++j];
+                                if (j == numTokens) {
+                                    isSentenceValid = 0;
+                                    break;
+                                }
                                 strcpy(objects[objectCount][1], curr);
                                 objectCount++;
                                 curr = tokens[++j];
@@ -651,11 +668,6 @@ struct Result* parsing() {
                         }
 
                     }
-                    else if (j + 1 == numTokens) {
-                        actions[actionCount][5] =  objects[objectCount - 1];
-                        sentences[sentenceCount][1] = actions[actionCount];
-                        sentenceCount++;
-                    }
                     else if (strcmp(curr, "if") == 0) {
                         actions[actionCount][5] = objects[objectCount - 1];
                         subjectState = 0;
@@ -663,6 +675,17 @@ struct Result* parsing() {
                         sentences[sentenceCount][1] = actions[actionCount];
                         sentenceState = 2;
                         actionCount++;
+                        isSentenceValid = 0;
+                    }
+
+                    else if (j + 1 == numTokens) {
+                        actions[actionCount][5] =  objects[objectCount - 1];
+                        sentences[sentenceCount][1] = actions[actionCount];
+                        sentenceCount++;
+                        if (strcmp(curr, objects[objectCount][1]) != 0) {
+                            isSentenceValid = 0;
+                            break;
+                        }
                     }
 
                     else {
@@ -713,6 +736,10 @@ struct Result* parsing() {
                 else if (strcmp(curr, "has") == 0) {
                     conditions[conditionCount][1] = &subjects[subjectCount-1];
                     curr = tokens[++j];
+                    if (j==numTokens) {
+                        isSentenceValid = 0;
+                        break;
+                    }
                     if (strcmp(curr, "more") == 0) { // check follow-up word "than"
                         char *str6 = malloc(3*sizeof(char));
                         strcpy(str6,curr);
@@ -770,6 +797,10 @@ struct Result* parsing() {
                     strcpy(objects[objectCount][0],curr);
                     char *p = tokens[++j];
 
+                    if (j == numTokens) {
+                        break;
+                    }
+
                     if (is_curr_keyword(p)) {
                         isSentenceValid = 0;
                         break;
@@ -777,10 +808,15 @@ struct Result* parsing() {
 
                     objects[objectCount][1] = p;
                     objectCount++;
+                    int exit_here = 0;
                     if (j+1<numTokens) {
                         curr = tokens[++j];
                         while (strcmp(curr, "and") == 0 && j < numTokens) {
                             curr = tokens[++j];
+                            if (j == numTokens) {
+                                exit_here = 1;
+                                break;
+                            }
                             if (is_valid_digit_number(curr)) {
                                 strcpy(objects[objectCount][0],curr);
                                 curr = tokens[++j];
@@ -793,6 +829,11 @@ struct Result* parsing() {
                                 break;
                             }
                         }
+                        if (exit_here) {
+                            isSentenceValid = 0;
+                            break;
+                        }
+
                     }
                     else {
                         isSentenceValid = 1;
@@ -855,8 +896,13 @@ struct Result* parsing() {
                     break;
                 }
 
+                int exit_here = 0;
                 if (strcmp(curr, "and") == 0) {
                     while ((curr = tokens[i++])) {
+                        if (i == numTokens) {
+                            exit_here = 1;
+                            break;
+                        }
                         if (strcmp(curr, "has") == 0 || strcmp(curr, "at") == 0) {
                             break;
                         }
@@ -864,6 +910,10 @@ struct Result* parsing() {
                             isNewSentence = 1;
                             break;
                         }
+                    }
+                    if (exit_here) {
+                        isSentenceValid = 0;
+                        break;
                     }
                 }
                 else {

@@ -14,6 +14,7 @@
 
 // TODO: buyer seller not the same problem
 // TODO: print ">>" before taking input
+// TODO: buyer seller being same shit
 
 // TODO: who at <place> should return NO ONE if it has no people
 // TODO: ignore items from inventory with 0 amount
@@ -95,12 +96,9 @@ int main() {
             int conditionCount = 0;
             int objectCount = 0;
 
-            printf("%d\n", sentenceCount);
-
             for (int i = 0; i<sentenceCount; i++) {
 
                 char**** currSentence = input->sentences[i];
-
 
                 // ACTIONS
 
@@ -109,7 +107,7 @@ int main() {
                 // finding the number of actions for the current sentence
                 int numOfActionsforCurrSentence = 0;
                 while (1) {
-                    if (actions[numOfActionsforCurrSentence] == currSentence[1]) {
+                    if (actions[actionCount + numOfActionsforCurrSentence] == currSentence[1]) {
                         numOfActionsforCurrSentence++;
                         break;
                     }
@@ -277,7 +275,11 @@ int main() {
                         // END OF LOADING INPUT
 
                         conditionResult = conditionEvaluator(conditionArguments, people, places);
-                        if (conditionResult == 0) break;
+                        if (conditionResult == 0) {
+                            conditionCount++;
+                            break;
+                        }
+
 
 
                         if (input->conditions[conditionCount] == currSentence[3]) {
