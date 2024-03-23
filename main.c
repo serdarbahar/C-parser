@@ -95,6 +95,7 @@ int main() {
             int conditionCount = 0;
             int objectCount = 0;
 
+            printf("%d\n", sentenceCount);
 
             for (int i = 0; i<sentenceCount; i++) {
 
