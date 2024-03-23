@@ -705,6 +705,7 @@ struct Result* parsing() {
                     conditions[conditionCount][1] = &subjects[subjectCount-1];
                     char *str5 = malloc(3*sizeof(char));
                     strcpy(str5,curr);
+                    str5 = "at";
                     *(conditions[conditionCount][2]) = str5;
                     subjectState = 3;
                     verbState = 1;

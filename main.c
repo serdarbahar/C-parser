@@ -12,6 +12,9 @@
 // TODO: "if <condition>" (without a start) should not be invalid
 // TODO: check if there is a question mark at the end of question sentences
 
+// TODO: buyer seller not the same problem
+// TODO: print ">>" before taking input
+
 // TODO: who at <place> should return NO ONE if it has no people
 // TODO: ignore items from inventory with 0 amount
 // TODO: ok de
@@ -104,21 +107,22 @@ int main() {
 
                 // finding the number of actions for the current sentence
                 int numOfActionsforCurrSentence = 0;
-                for (; actions[numOfActionsforCurrSentence] <= currSentence[1]; numOfActionsforCurrSentence++) {}
+                while (1) {
+                    if (actions[numOfActionsforCurrSentence] == currSentence[1]) {
+                        numOfActionsforCurrSentence++;
+                        break;
+                    }
+                    numOfActionsforCurrSentence++;
+                }
+
+
 
                 actionArgs** actionArgumentsList = calloc(numOfActionsforCurrSentence, sizeof(actionArgs*));
                 int actionArgumentIndex = 0;
 
                 // LOADING INPUT
 
-
-
-                for (; actions[actionCount] <= currSentence[1]; actionCount++) {
-
-                    printf("%d\n", actionCount);
-                    printf("%p ", actions[0]);
-                    printf("%p ", actions[actionCount]);
-                    printf("%p\n", currSentence[1]);
+                while(1) {
 
                     actionArgs* actionArguments =  malloc(sizeof(actionArgs));
 
@@ -193,8 +197,13 @@ int main() {
 
                     actionArgumentsList[actionArgumentIndex++] = actionArguments;
 
-                    printf("%p ", actions[0]);
-                    printf("%p\n", currSentence[1]);
+
+                    if (actions[actionCount] == currSentence[1]) {
+                        actionCount++;
+                        break;
+                    }
+
+                    actionCount++;
 
                 }
                 // END OF LOADING INPUT
@@ -208,7 +217,7 @@ int main() {
                 if (conditionsExist) { // true if conditions exist
 
                     // all conditions must be met for the actions to be executed
-                    for (; input->conditions[conditionCount] <= currSentence[3]; conditionCount++) {
+                    while (1) {
 
                         char ***currCondition = input->conditions[conditionCount];
                         conditionArgs* conditionArguments = calloc(1, sizeof(conditionArgs));
@@ -269,8 +278,17 @@ int main() {
                         conditionResult = conditionEvaluator(conditionArguments, people, places);
                         if (conditionResult == 0) break;
 
+
+                        if (input->conditions[conditionCount] == currSentence[3]) {
+                            conditionCount++;
+                            free(conditionArguments);
+                            break;
+                        }
+
+
 //                        free(items);
                         free(conditionArguments);
+                        conditionCount++;
                     }
                 }
 
