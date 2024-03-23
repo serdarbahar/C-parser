@@ -244,6 +244,7 @@ struct Result* parsing() {
 
     char inputStream[MAX_TOKEN+1];
 
+    printf(">> ");
 
     fgets(inputStream, MAX_TOKEN, stdin);
 
@@ -257,7 +258,7 @@ struct Result* parsing() {
     int exit = 0;
 
     int numTokens = 0;
-    while ((token = strsep(&ptr, " \n?")) != NULL) {
+    while ((token = strsep(&ptr, " \n")) != NULL) {
         if (token[0] == '\0')
             continue;
         if (strcmp(token, "exit") == 0)

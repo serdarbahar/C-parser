@@ -7,14 +7,10 @@
 
 #define boolean int
 
-// TODO: why is "serdar go to b if serdar at a" invalid?
-// TODO:
-// TODO: "if <condition>" (without a start) should not be invalid
+// TODO: "if <condition>" (without a start) should not be invalid (?)
 // TODO: check if there is a question mark at the end of question sentences
 
 // TODO: buyer seller not the same problem
-// TODO: print ">>" before taking input
-// TODO: buyer seller being same shit
 
 // TODO: who at <place> should return NO ONE if it has no people
 // TODO: ignore items from inventory with 0 amount
