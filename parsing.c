@@ -356,7 +356,7 @@ struct Result* parsing() {
                         isSentenceValid = 0;
                         break;
                     }
-                    strcpy(whereQuestion, curr);;
+                    strcpy(whereQuestion, curr);
                 }
                 else if (j == 1) {
                     if (strcmp(curr, "where") != 0) {
@@ -377,7 +377,7 @@ struct Result* parsing() {
                         break;
                     }
 
-                    strcpy(totalQuestion, curr); ;
+                    strcpy(totalQuestion, curr);
                 }
                 else if (j == 1) {
                     if (strcmp(curr, "total") != 0) {
@@ -495,7 +495,8 @@ struct Result* parsing() {
                 subjectCount++;
                 subjectState = 1;
 
-            } else if (subjectState == 1) { // "and" or a verb expected
+            }
+            else if (subjectState == 1) { // "and" or a verb expected
 
                 if (strcmp(curr, "and") == 0)
                     subjectState = 2;
@@ -518,7 +519,7 @@ struct Result* parsing() {
                     if (strcmp(curr, "go") == 0) {
                         char* str1 = malloc(1024*sizeof(char));
                         strcpy(str1,curr);
-                        actions[actionCount][2] = &str1;
+                        *actions[actionCount][2] = str1;
                         j++; //skipping "to"
                         char *p = tokens[j];
                         if (strcmp(p, "to") != 0) {
@@ -556,7 +557,7 @@ struct Result* parsing() {
                         break;
                     }
 
-                    strcpy(objects[objectCount][0], curr);;
+                    strcpy(objects[objectCount][0], curr);
                     char *p = tokens[++j];
 
                     if (is_valid_digit_number(p)){
@@ -711,11 +712,11 @@ struct Result* parsing() {
                 else if (strcmp(curr, "has") == 0) {
                     conditions[conditionCount][1] = &subjects[subjectCount-1];
                     curr = tokens[++j];
-                    if (strcmp(curr, "more") == 0) { //check follow up word "than"
+                    if (strcmp(curr, "more") == 0) { // check follow-up word "than"
                         char *str6 = malloc(3*sizeof(char));
                         strcpy(str6,curr);
                         *(conditions[conditionCount][2]) = str6;
-                        curr = tokens[++j]; //skipping than
+                        curr = tokens[++j]; // skipping than
                         subjectState = 3;
                         verbState = 2;
                     }
@@ -723,7 +724,7 @@ struct Result* parsing() {
                         char *str7 = malloc(3*sizeof(char));
                         strcpy(str7,curr);
                         *(conditions[conditionCount][2]) = str7;
-                        curr = tokens[++j]; //skipping than
+                        curr = tokens[++j]; // skipping than
                         subjectState = 3;
                         verbState = 2;
                     }
@@ -835,8 +836,9 @@ struct Result* parsing() {
                     if (j == numTokens) {
                         isSentenceValid = 1;
                         conditions[conditionCount][5] = objects[objectCount - 1];
-                        sentences[sentenceCount][1] = actions[actionCount];
+                        sentences[sentenceCount][3] = conditions[conditionCount];
                         sentenceCount++;
+                        break;
                     }
                 }
 
@@ -849,7 +851,6 @@ struct Result* parsing() {
                     sentences[sentenceCount][1] = actions[actionCount];
                     sentenceCount++;
                     isSentenceValid = 1;
-
                     break;
                 }
 

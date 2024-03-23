@@ -45,7 +45,10 @@ void addItemToInventory(struct Inventory* inventory, char* itemName, int quantit
 
     // create a new item if it doesn't exist in the inventory
 
-    inventory->itemNames[inventory->numOfItems] = itemName;
+    char* thisItemName = malloc(strlen(itemName) + 1);
+    strcpy(thisItemName, itemName);
+
+    inventory->itemNames[inventory->numOfItems] = thisItemName;
     inventory->itemCounts[inventory->numOfItems] = quantity;
     inventory->numOfItems++;
 
@@ -150,7 +153,7 @@ void freePlace(struct Place* place) {
     free(place->peopleInPlace);
     free(place);
 }
-struct Place* initializePlace(char* name, int initialPersonCapacity) {
+struct Place* initializePlace(char* name, int initialPersonCapacity, struct PlacesList* places) {
 
     struct Place *place = malloc(sizeof(struct Place));
     place->name = name;
@@ -165,6 +168,8 @@ struct Place* initializePlace(char* name, int initialPersonCapacity) {
     place->addPerson = addPersonToPlace;
     place->removePerson = removePersonFromPlace;
     place->free = freePlace;
+
+    places->addPlace(places, place);
 
     return place;
 }
@@ -194,8 +199,8 @@ struct Place* getPlaceFromPlacesList(struct PlacesList* placesList, char* name) 
         if (strcmp(placesList->placeNames[i], name) == 0)
             return placesList->placePointers[i];
 
-    return NULL;
-
+    struct Place* newPlace = initializePlace(name, 10, placesList);
+    return newPlace;
 }
 void setMemoryToPlacesList(struct PlacesList* placesList, int newCapacity) {
     // newCapacity indicates capacity of distinct places
@@ -283,7 +288,10 @@ struct Person* initializePerson(char* name, struct People* people) {
 
     struct Person* person = malloc(sizeof(struct Person));
 
-    person->name = name;
+    char* thisName = malloc(strlen(name) + 1);
+    strcpy(thisName, name);
+    person->name = thisName;
+
     person->inventory = initializeInventory(10);
     person->location = &NOWHERE;
 
@@ -294,7 +302,6 @@ struct Person* initializePerson(char* name, struct People* people) {
     person->free = freePerson;
 
     people->addPerson(people, person);
-
 
     return person;
 }
@@ -321,8 +328,8 @@ struct Person* getPersonFromPeople(struct People* people, char* name) {
         if (strcmp(people->personNames[i], name) == 0)
             return people->personPointers[i];
 
-    return NULL;
-
+    struct Person* newPerson = initializePerson(name, people);
+    return newPerson;
 }
 void setMemoryToPeople(struct People* people, int newCapacity) {
     // newCapacity indicates capacity of distinct people
