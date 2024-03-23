@@ -227,7 +227,7 @@ int is_curr_keyword(const char *str) {
         strcmp(str,"sell") == 0 || strcmp(str,"to") == 0 || strcmp(str,"go") == 0 || strcmp(str,"if") == 0 ||
         strcmp(str,"at") == 0 || strcmp(str,"has") == 0 || strcmp(str,"less") == 0 || strcmp(str,"than") == 0 ||
         strcmp(str,"more") == 0 || strcmp(str,"total") == 0 || strcmp(str,"where") == 0 || strcmp(str,"who") == 0 ||
-        strcmp(str,"NOBODY") == 0 || strcmp(str,"NOTHING") == 0 || strcmp(str,"NOWHERE") == 0 || strcmp(str, "exit")) {
+        strcmp(str,"NOBODY") == 0 || strcmp(str,"NOTHING") == 0 || strcmp(str,"NOWHERE") == 0 || strcmp(str, "exit") == 0) {
         return 1;
     }
     return 0;
@@ -910,7 +910,6 @@ struct Result* parsing() {
     result->whoAtQuestion = whoAtQuestion;
     result->freeResult = freeResult;
     result->sentenceCount = sentenceCount;
-
 
     return result;
 
