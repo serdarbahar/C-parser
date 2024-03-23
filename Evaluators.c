@@ -102,6 +102,7 @@ int actionEvaluator(actionArgs* args, struct People* people, struct PlacesList* 
         for (int i=0; i<args->itemChainSize; i++) {
 
             // multiplying by num of people buying the item since the seller must sell the same quantity to all of them
+            wantedItems[i] = args->itemChain[i];
             wantedItems[i]->quantity *= args->personChain1Size;
 
             if (seller->getItemQuantity(seller, wantedItems[i]->name) < wantedItems[i]->quantity) {
