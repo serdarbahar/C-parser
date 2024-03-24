@@ -88,13 +88,8 @@ int main() {
             int actionCount = 0;
             int conditionCount = 0;
             int objectCount = 0;
-            int isSellerBuyer = 0;
 
             for (int i = 0; i<sentenceCount; i++) {
-
-                if (isSellerBuyer) {
-                    break;
-                }
 
                 char**** currSentence = input->sentences[i];
 
@@ -160,17 +155,6 @@ int main() {
                         actionArguments->personChain2Size = 1;
                     }
                     actionArguments->personChain2 = currAction[3];
-
-                    //TODO: CHECK IF BUYER AND SELLER ARE SAME
-                    if (actionArguments->personChain2Size) {
-                        for (int k = 0; k < actionArguments->personChain1Size; k++) {
-                            if (strcmp(actionArguments->personChain1[k], actionArguments->personChain2[0]) == 0) {
-                                printf("INVALID\n");
-                                isSellerBuyer = 1;
-                                goto isSellerBuyer;
-                            }
-                        }
-                    }
 
                     ItemWithQuantity **items = malloc(1024 * sizeof(ItemWithQuantity *));
                     //item chain
@@ -310,8 +294,6 @@ int main() {
                         actionEvaluator(actionArgumentsList[k], people, places);
 
                 }
-
-                isSellerBuyer:
 
                 // TODO: write a function to free everything inside actionArguments
                 for (int k = 0; k < numOfActionsforCurrSentence; k++) {

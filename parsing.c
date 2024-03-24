@@ -738,6 +738,19 @@ struct Result* parsing() {
                         curr = tokens[++j]; //subject, bought from or sold to
                         actions[actionCount][3] = &actionFromTo[actionCount];
                         strcpy(actionFromTo[actionCount],curr);
+
+                        //check if buyer and seller are same
+                        char** startOfSubjects = actions[actionCount][0];
+                        for (int i = 0; actions[actionCount][0][i] <= actions[actionCount][1][0]; i++) {
+                            if (strcmp(actions[actionCount][0][i],curr) == 0) {
+                                isSentenceValid = 0;
+                                break;
+                            }
+                        }
+                        if (!isSentenceValid)
+                            break;
+
+
                         if (j + 1 == numTokens) {
                             isSentenceValid = 1;
                             actions[actionCount][5] =  objects[objectCount - 1];
