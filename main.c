@@ -8,10 +8,6 @@
 #define boolean int
 
 // TODO: "if <condition>" (without a start) should not be invalid (?)
-// TODO: who at <place> should return NO ONE if it has no people
-// TODO: ignore items from inventory with 0 amount
-// TODO: ok de
-// TODO: say nothing if inventory is empty
 
 
 int main() {
@@ -274,7 +270,6 @@ int main() {
                         }
 
 
-
                         if (input->conditions[conditionCount] == currSentence[3]) {
                             conditionCount++;
                             free(conditionArguments);
@@ -294,6 +289,8 @@ int main() {
                         actionEvaluator(actionArgumentsList[k], people, places);
 
                 }
+
+                printf("OK\n");
 
                 // TODO: write a function to free everything inside actionArguments
                 for (int k = 0; k < numOfActionsforCurrSentence; k++) {

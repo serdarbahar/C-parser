@@ -1,4 +1,4 @@
-# Install script for directory: /Users/serdarbahar/CLionProjects/C-Interpreter
+# Install script for directory: /Users/toprak/cmpe230/Interpreter Project
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/serdarbahar/CLionProjects/C-Interpreter/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/toprak/cmpe230/Interpreter Project/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

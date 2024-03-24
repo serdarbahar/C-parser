@@ -318,6 +318,11 @@ char* questionEvaluator(questionArgs* args) {
 
         int numOfPeople = args->place->numOfPeople;
 
+        if (numOfPeople == 0) {
+            strcpy(resultString, "NOBODY");
+            return resultString;
+        }
+
         int resultStringIdx = 0;
 
         for (int personIdx = 0; personIdx < numOfPeople; personIdx++) {
@@ -371,6 +376,8 @@ char* questionEvaluator(questionArgs* args) {
         for (int i=0; i<inventory->numOfItems; i++) {
             char* itemName = inventory->itemNames[i];
             int quantity = inventory->itemCounts[i];
+            if (quantity == 0) continue;
+
             char quantityStr[10];
             sprintf(quantityStr, "%d", quantity);
 
@@ -414,6 +421,9 @@ char* questionEvaluator(questionArgs* args) {
 //            return NULL;
 //        }
 //        resultString = temp;
+
+        if (strlen(resultString) == 0)
+            strcpy(resultString, "NOTHING");
 
         return resultString;
     }
