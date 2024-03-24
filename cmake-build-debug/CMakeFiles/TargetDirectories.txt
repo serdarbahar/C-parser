@@ -1,0 +1,3 @@
+/Users/serdarbahar/CLionProjects/C-Interpreter/cmake-build-debug/CMakeFiles/Interpreter_Project.dir
+/Users/serdarbahar/CLionProjects/C-Interpreter/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/serdarbahar/CLionProjects/C-Interpreter/cmake-build-debug/CMakeFiles/rebuild_cache.dir
