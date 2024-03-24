@@ -258,8 +258,6 @@ struct Result* parsing() {
 
     fgets(inputStream, MAX_TOKEN, stdin);
 
-
-
     char *tokens[MAX_TOKEN];
     char *ptr = inputStream;
     char *token;
