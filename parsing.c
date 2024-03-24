@@ -736,6 +736,10 @@ struct Result* parsing() {
                     } else if ((strcmp(curr, "from") == 0 && verbState == 10) ||
                                (strcmp(curr, "to") == 0 && verbState == 20)) {
                         curr = tokens[++j]; //subject, bought from or sold to
+                        if (j==numTokens) {
+                            isSentenceValid = 0;
+                            break;
+                        }
                         actions[actionCount][3] = &actionFromTo[actionCount];
                         strcpy(actionFromTo[actionCount],curr);
 
