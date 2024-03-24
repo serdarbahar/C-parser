@@ -9,9 +9,6 @@
 
 // TODO: "if <condition>" (without a start) should not be invalid (?)
 
-// TODO: check alphanumerism
-
-// TODO: buyer seller not the same problem
 
 int main() {
 
@@ -272,6 +269,7 @@ int main() {
                             break;
                         }
 
+
                         if (input->conditions[conditionCount] == currSentence[3]) {
                             conditionCount++;
                             free(conditionArguments);
@@ -295,8 +293,10 @@ int main() {
                 printf("OK\n");
 
                 // TODO: write a function to free everything inside actionArguments
-                for (int k = 0; k < numOfActionsforCurrSentence; k++)
-                    free(actionArgumentsList[k]);
+                for (int k = 0; k < numOfActionsforCurrSentence; k++) {
+                    if (actionArgumentsList[k] != NULL)
+                        free(actionArgumentsList[k]);
+                }
 
             }
 
