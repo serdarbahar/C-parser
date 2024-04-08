@@ -302,8 +302,6 @@ int main() {
 
             }
 
-            printf("OK\n");
-
         }
 
         input->freeResult(input);
