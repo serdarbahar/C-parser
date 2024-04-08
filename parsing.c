@@ -700,8 +700,6 @@ struct Result* parsing() {
                                 isSentenceValid = 0;
                                 break;
                             }
-
-
                             if (is_valid_digit_number(curr)) {
                                 endOfActionContinuingWithAnd = 0;
                                 strcpy(objects[objectCount][0], curr);
@@ -713,6 +711,24 @@ struct Result* parsing() {
                                 strcpy(objects[objectCount][1], curr);
                                 objectCount++;
                                 curr = tokens[++j];
+
+                                int x = 0;
+                                while(1) {
+                                    if (x) {
+                                        if (strcmp(objects[objectCount - 1][1], objects[objectCount - 1 - x][1]) == 0) {
+                                            isSentenceValid = 0;
+                                            break;
+                                        }
+                                    }
+                                    if (objects[objectCount-1-x] == actions[actionCount][4]) {
+                                        break;
+                                    }
+                                    x++;
+                                }
+                                if (isSentenceValid==0) {
+                                    break;
+                                }
+
                                 if (j == numTokens) {
                                     actions[actionCount][5] =  objects[objectCount - 1];
                                     sentences[sentenceCount][1] = actions[actionCount];
@@ -865,7 +881,6 @@ struct Result* parsing() {
                     }
                 }
             }
-
             else if (subjectState == 2) {
 
                 if (is_curr_keyword(curr)) {
@@ -899,7 +914,7 @@ struct Result* parsing() {
                         isSentenceValid = 0;
                         break;
                     }
-
+                    //use strcpy
                     objects[objectCount][1] = p;
                     objectCount++;
                     int exit_here = 0;
@@ -914,10 +929,33 @@ struct Result* parsing() {
                             if (is_valid_digit_number(curr)) {
                                 strcpy(objects[objectCount][0],curr);
                                 curr = tokens[++j];
-                                //check if curr is a keyword
+                                if (is_curr_keyword(curr)) {
+                                    exit_here = 1;
+                                    break;
+                                }
+
                                 strcpy(objects[objectCount][1],curr);
-                                curr = tokens[++j];
                                 objectCount++;
+                                int x = 0;
+                                while(1) {
+                                    if (x) {
+                                        if (strcmp(objects[objectCount - 1][1], objects[objectCount - 1 - x][1]) == 0) {
+                                            exit_here = 1;
+                                            break;
+                                        }
+                                    }
+                                    if (objects[objectCount-1-x] == conditions[conditionCount][3]) {
+                                        break;
+                                    }
+                                    x++;
+                                }
+                                if (exit_here) {
+                                    isSentenceValid = 0;
+                                    break;
+                                }
+
+
+                                curr = tokens[++j];
                             } else {
                                 j--;
                                 break;
