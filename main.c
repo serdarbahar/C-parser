@@ -290,7 +290,8 @@ int main() {
 
                 }
 
-                printf("OK\n");
+                if (i == sentenceCount - 1)
+                    printf("OK\n");
 
                 // TODO: write a function to free everything inside actionArguments
                 for (int k = 0; k < numOfActionsforCurrSentence; k++) {
