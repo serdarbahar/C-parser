@@ -233,7 +233,6 @@ int is_curr_keyword(const char *str) {
     }
     return 0;
 }
-
 int curr_contains_only_alphanumeric(const char *str) {
     for (int i = 0; str[i] != '\0'; i++) {
         if (!(str[i] >= 'A' && str[i] <= 'Z') && !(str[i]>='a' && str[i]<='z') && str[i] != '_' && !(str[i] >= '0' && str[i]<='9')) {
@@ -242,14 +241,12 @@ int curr_contains_only_alphanumeric(const char *str) {
     }
     return 1;
 }
-
 int is_curr_question_word(const char *str) {
     if (strcmp(str,"total") == 0 || strcmp(str,"where") == 0 || strcmp(str,"who") == 0) {
         return 1;
     }
     return 0;
 }
-
 struct Result* parsing() {
 
     char inputStream[MAX_TOKEN+1];
