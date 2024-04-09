@@ -163,7 +163,7 @@ int main() {
                         while (1) {
                             ItemWithQuantity *item = malloc(sizeof(ItemWithQuantity));
                             item->name = input->objects[objectCount][1];
-                            item->quantity = atoi(input->objects[objectCount][0]);
+                            item->quantity = (int) strtol(input->objects[objectCount][0],NULL,10);
                             items[k] = item;
 
                             if (input->objects[objectCount][0] == currAction[5][0] &&
@@ -242,7 +242,7 @@ int main() {
 
                                 ItemWithQuantity* item = malloc(sizeof(ItemWithQuantity));
                                 item->name = input->objects[objectCount][1];
-                                item->quantity = atoi(input->objects[objectCount][0]);
+                                item->quantity = (int) strtol(input->objects[objectCount][0], NULL, 10);
                                 items[k] = item;
 
                                 if (input->objects[objectCount][0] == currCondition[4][0] &&
@@ -299,6 +299,7 @@ int main() {
                     if (actionArgumentsList[k] != NULL)
                         free(actionArgumentsList[k]);
                 }
+                free(actionArgumentsList);
 
             }
 
