@@ -308,6 +308,12 @@ int main() {
         input->freeResult(input);
     }
 
+    /*TODO:
+     * try
+     *  >>a buy 1 c
+     *  >>exit
+     * gives "*** error for object 0x600002f40080: pointer being freed was not allocated"
+     */
     places->free(places);
     people->free(people);
 
