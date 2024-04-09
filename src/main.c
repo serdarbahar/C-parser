@@ -325,14 +325,6 @@ int main() {
      *  >>a buy 1 c
      *  >>exit
      * gives "*** error for object 0x600002f40080: pointer being freed was not allocated"
-     * might be because instances in places is never allocated?
-     * but does not give the same error if directly given "exit" without prior input?
-     */
-    /*TODO:
-     * in docker image try
-     *  >>a buy 1 c
-     *  >>a buy 1 c
-     *  gives segmentation fault in my container
      */
     places->free(places);
     people->free(people);
