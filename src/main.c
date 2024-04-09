@@ -208,9 +208,7 @@ int main() {
 
                 // CONDITIONS
 
-                boolean conditionsExist = currSentence[2][0][0] != NULL;
-
-                if (conditionsExist) { // true if conditions exist
+                if (input->conditionsExist) { // true if conditions exist
 
                     // all conditions must be met for the actions to be executed
                     while (1) {

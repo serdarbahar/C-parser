@@ -27,6 +27,7 @@ struct Result {
     int isWhere;
     int isTotalItem;
     int isTotal;
+    int conditionsExist;
     char***** sentences;
     char**** actions;
     char**** conditions;

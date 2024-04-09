@@ -325,7 +325,7 @@ struct Result* parsing() {
     int isTotal = 0;
     int questionCheck = 0;
 
-
+    int conditionsExist = 0;
 
     int j = 0;
     while (j < numTokens) {
@@ -336,7 +336,6 @@ struct Result* parsing() {
             isSentenceValid = 0;
             break;
         }
-
         if (isQuestion) {
 
             if (isTotal + isTotalItem + isWhere + isWhoAt != 1) {
@@ -807,6 +806,7 @@ struct Result* parsing() {
             }
         }
         else if (sentenceState == 2) {
+            conditionsExist = 1;
             sentences[sentenceCount][2] = conditions[conditionCount];
             sentenceState = 3;
             j--;
@@ -1094,6 +1094,8 @@ struct Result* parsing() {
     result->whoAtQuestion = whoAtQuestion;
     result->freeResult = freeResult;
     result->sentenceCount = sentenceCount;
+
+    result->conditionsExist=conditionsExist;
 
     return result;
 
