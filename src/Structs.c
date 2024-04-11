@@ -277,9 +277,8 @@ int personGetItemQuantity(struct Person* person, char* itemName) {
 void freePerson(struct Person* person) {
     free(person->name);
 
-    person->inventory->free(person->inventory);
-
-    person->location->free(person->location);
+    if (person->inventory->getItemQuantity != NULL)
+        person->inventory->free(person->inventory);
 
     free(person);
 }
