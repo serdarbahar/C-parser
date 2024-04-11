@@ -134,12 +134,20 @@ int main() {
 
                     //subject chain
                     int subjectsChainSize = 0;
-                    for (int k = 0; currAction[0][k] <= currAction[1][0] && currAction[0][k] != NULL; k++) {
+                    int k = 0;
+                    while (1) {
                         subjectsChainSize++;
+                        if (currAction[0][k] == NULL) {
+                            break;
+                        }
+                        if (currAction[0][k] != currAction[1][0])
+                            break;
+                        k++;
                     }
 
                     char** subjectChain = calloc(subjectsChainSize, sizeof(char*));
-                    for (int k = 0; currAction[0][k] <= currAction[1][0] && currAction[0][k] != NULL; k++) {
+
+                    for (k = 0; k < subjectsChainSize; k++) {
                         subjectChain[k] = currAction[0][k];
                     }
                     actionArguments->personChain1 = subjectChain;
@@ -159,11 +167,11 @@ int main() {
                         objectCount++;
                     } else {
 
-                        int k = 0;
+                        k = 0;
                         while (1) {
                             ItemWithQuantity *item = malloc(sizeof(ItemWithQuantity));
                             item->name = input->objects[objectCount][1];
-                            item->quantity = atoi(input->objects[objectCount][0]);
+                            item->quantity = (int) strtol(input->objects[objectCount][0],NULL,10);
                             items[k] = item;
 
                             if (input->objects[objectCount][0] == currAction[5][0] &&
@@ -200,9 +208,7 @@ int main() {
 
                 // CONDITIONS
 
-                boolean conditionsExist = currSentence[2][0][0] != NULL;
-
-                if (conditionsExist) { // true if conditions exist
+                if (input->conditionsExist) { // true if conditions exist
 
                     // all conditions must be met for the actions to be executed
                     while (1) {
@@ -216,14 +222,20 @@ int main() {
 
                         //subject chain
                         int subjectsChainSize = 0;
-                        for (int k = 0;
-                             currCondition[0][k] <= currCondition[1][0] && currCondition[0][k] != NULL; k++) {
+                        int k = 0;
+                        while (1) {
                             subjectsChainSize++;
+                            if (currCondition[0][k] == NULL) {
+                                break;
+                            }
+                            if (currCondition[0][k] != currCondition[1][0])
+                                break;
+                            k++;
                         }
 
-                        char* subjectChain[subjectsChainSize];
-                        for (int k = 0;
-                             currCondition[0][k] <= currCondition[1][0] && currCondition[0][k] != NULL; k++) {
+                        char** subjectChain = calloc(subjectsChainSize,sizeof(char*));
+                        for (k = 0;
+                             k<subjectsChainSize; k++) {
                             subjectChain[k] = currCondition[0][k];
                         }
                         conditionArguments->personChain = subjectChain;
@@ -237,12 +249,12 @@ int main() {
                             objectCount++;
                         }
                         else {
-                            int k = 0;
+                            k = 0;
                             while (1) {
 
                                 ItemWithQuantity* item = malloc(sizeof(ItemWithQuantity));
                                 item->name = input->objects[objectCount][1];
-                                item->quantity = atoi(input->objects[objectCount][0]);
+                                item->quantity = (int) strtol(input->objects[objectCount][0], NULL, 10);
                                 items[k] = item;
 
                                 if (input->objects[objectCount][0] == currCondition[4][0] &&
@@ -299,6 +311,7 @@ int main() {
                     if (actionArgumentsList[k] != NULL)
                         free(actionArgumentsList[k]);
                 }
+                free(actionArgumentsList);
 
             }
 
@@ -306,6 +319,10 @@ int main() {
 
         input->freeResult(input);
     }
+
+    //TODO: exit command gives error
+
+    //TODO: freeResult gives error in some inputs FIX
 
     places->free(places);
     people->free(people);

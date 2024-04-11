@@ -233,7 +233,6 @@ int is_curr_keyword(const char *str) {
     }
     return 0;
 }
-
 int curr_contains_only_alphanumeric(const char *str) {
     for (int i = 0; str[i] != '\0'; i++) {
         if (!(str[i] >= 'A' && str[i] <= 'Z') && !(str[i]>='a' && str[i]<='z') && str[i] != '_' && !(str[i] >= '0' && str[i]<='9')) {
@@ -242,14 +241,12 @@ int curr_contains_only_alphanumeric(const char *str) {
     }
     return 1;
 }
-
 int is_curr_question_word(const char *str) {
     if (strcmp(str,"total") == 0 || strcmp(str,"where") == 0 || strcmp(str,"who") == 0) {
         return 1;
     }
     return 0;
 }
-
 struct Result* parsing() {
 
     char inputStream[MAX_TOKEN+1];
@@ -325,7 +322,7 @@ struct Result* parsing() {
     int isTotal = 0;
     int questionCheck = 0;
 
-
+    int conditionsExist = 0;
 
     int j = 0;
     while (j < numTokens) {
@@ -336,7 +333,6 @@ struct Result* parsing() {
             isSentenceValid = 0;
             break;
         }
-
         if (isQuestion) {
 
             if (isTotal + isTotalItem + isWhere + isWhoAt != 1) {
@@ -807,6 +803,7 @@ struct Result* parsing() {
             }
         }
         else if (sentenceState == 2) {
+            conditionsExist = 1;
             sentences[sentenceCount][2] = conditions[conditionCount];
             sentenceState = 3;
             j--;
@@ -1094,6 +1091,8 @@ struct Result* parsing() {
     result->whoAtQuestion = whoAtQuestion;
     result->freeResult = freeResult;
     result->sentenceCount = sentenceCount;
+
+    result->conditionsExist=conditionsExist;
 
     return result;
 
