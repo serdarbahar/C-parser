@@ -150,6 +150,7 @@ void removePersonFromPlace(struct Place* place, struct Person* person) {
 
 }
 void freePlace(struct Place* place) {
+    free(place->name);
     free(place->peopleInPlace);
     free(place);
 }
@@ -224,7 +225,6 @@ void setMemoryToPlacesList(struct PlacesList* placesList, int newCapacity) {
 }
 /*
  * Frees the placesList struct and every place in it.
-
  */
 void freePlacesList(struct PlacesList* placesList) {
     for (int i=0; i<placesList->numOfPlaces; i++)
@@ -232,6 +232,7 @@ void freePlacesList(struct PlacesList* placesList) {
 
     free(placesList->placeNames);
     free(placesList->placePointers);
+
     free(placesList);
 }
 struct PlacesList* initializePlacesList(int initialPlaceCapacity) {
@@ -277,10 +278,8 @@ void freePerson(struct Person* person) {
     free(person->name);
 
     person->inventory->free(person->inventory);
-    free(person->inventory);
 
     person->location->free(person->location);
-    free(person->location);
 
     free(person);
 }
